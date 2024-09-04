@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Order Your Jersey' %></title>
+    
+    <link rel="shortcut icon" href="/assets/images/tripple44fc-pic.png">
+
+    <!-- Vendor CSS (Required on all pages) -->
+    <link href="/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Icons CSS (Required on all pages) -->
+    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    
+    <!-- App CSS (Required on all pages) -->
+    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Theme Config JS (Required on all pages) -->
+    <script src="/assets/js/config.js"></script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <% if (showSidebar) { %>
+            <!-- Sidebar -->
+            <%- include('../partials/sidebar') %>
+        <% } %>
+
+        <!-- Main content area -->
+        <div class="content-page">
+            <div class="content">
+                <%- body %>
+            </div>
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/assets/js/vendor.js"></script>
+    <script src="/assets/js/app.js"></script>
+
+    <!-- Vector Map JS -->
+    <script src="/assets/vendor/jsvectormap/js/jsvectormap.min.js"></script>
+    <script src="/assets/vendor/jsvectormap/maps/world-merc.js"></script>
+    <script src="/assets/vendor/jsvectormap/maps/world.js"></script>
+
+    <!-- Dashboard JS -->
+    <script src="/assets/js/pages/dashboard.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+     
+    <!-- Delete Product Script -->
+    <script>
+        function deleteProduct(id) {
+            fetch(`/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    // Handle non-redirect response, maybe display an error message
+                    alert('Error deleting product');
+                }
+            })
+            .catch(error => console.error('Error deleting product:', error));
+        }
+    </script>
+
+    
+
+
+
+</body>
+
+</html>
