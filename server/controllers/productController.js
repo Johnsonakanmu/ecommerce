@@ -9,6 +9,40 @@ exports.homePage = (req, res, next) => {
   });
 };
 
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10; // Number of items per page
+    const currentPage = parseInt(req.query.page) || 1; // Current page number
+
+    const { count, rows: products } = await Product.findAndCountAll({
+      limit,
+      offset: (currentPage - 1) * limit,
+      attributes: ['id', 'productName', 'productPrice', 'productStock', 'soldAmount', 'imageUrl', 'productCategories', 'size'],
+      order: [['createdAt', 'DESC']], // Adjust order as needed
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.render('product/product_list', {
+      title: 'All Products',
+      products,
+      currentPage,
+      totalPages,
+      limit,
+      showSidebar: true,
+    });
+  } catch (err) {
+    console.error('Error retrieving products:', err);
+    req.session.message = {
+      type: 'danger',
+      message: 'Error retrieving products',
+    };
+    res.redirect('/');
+  }
+};
+
+
 exports.listView = async (req, res, next) => {
   try {
     // Parse page and limit from query parameters, with default values
@@ -53,41 +87,23 @@ exports.addProducts = (req, res, next) => {
 
 exports.addProduct = async (req, res, next) => {
   const {
-    productName,
-    productCategories,
-    productBrand,
-    productWeight,
-    description,
-    gender,
-    color,
-    size,
-    tagNumber,
-    productStock,
-    tag,
-    productPrice,
-    productDiscount,
-    productTax,
-    imageUrl,
+    productName, productCategories, productBrand, productWeight, description, gender, color, size,
+    tagNumber, productStock, tag, productPrice, productDiscount, productTax, imageUrl,
   } = req.body;
-  console.log(req.body);
+  
   try {
+
+    // Calculate the discounted price
+    const discountedPrice = productPrice - productDiscount;
+
+    // Calculate the final price including tax
+    const finalPrice = discountedPrice + productTax;
+
     // Create the product
     const product = await Product.create({
-      productName,
-      productCategories,
-      productBrand,
-      productWeight,
-      gender,
-      color,
-      size,
-      description,
-      tagNumber,
-      productStock,
-      tag,
-      productPrice,
-      productDiscount,
-      productTax,
-      imageUrl: req.file.filename,
+      productName,  productCategories, productBrand, productWeight, gender, color, size,
+      description, tagNumber, productStock, tag, productPrice, productDiscount, discountedPrice,
+      productTax, finalPrice, imageUrl: req.file.filename,
     });
 
     // Set a success message in the session
@@ -176,6 +192,10 @@ exports.updateProduct = async (req, res) => {
       return res.redirect("/");
     }
 
+    // Calculate the discounted price and final price including tax
+    const discountedPrice = productPrice - productDiscount;
+    const finalPrice = discountedPrice + productTax;
+
     // Update the product properties
     products.productName = productName;
     products.productCategories = productCategories;
@@ -192,6 +212,10 @@ exports.updateProduct = async (req, res) => {
     products.productPrice = productPrice;
     products.productDiscount = productDiscount;
     products.productTax = productTax;
+    products.discountedPrice = discountedPrice; 
+    products.finalPrice = finalPrice; 
+
+    finalPrice
 
     // Save the updated product
     await products.save();
@@ -282,6 +306,51 @@ exports.productDetail = async (req, res, next) => {
       res.status(500).json({ message: err.message });
   }
 };
+
+
+
+ exports.updateProductSoldAmount = async (req, res) => {
+  const { id } = req.params; // Product ID from URL
+  const { soldAmount } = req.body; // Amount to add to soldAmount
+
+  try {
+    // Find the product by ID
+    const product = await Product.findOne({ where: { id } });
+
+    if (!product) {
+      req.session.message = {
+        type: "danger",
+        message: "Product not found",
+      };
+      return res.redirect("/"); // Redirect or handle error
+    }
+
+    // Update sold amount and calculate unsold amount
+    product.soldAmount = (product.soldAmount || 0) + soldAmount;
+    
+    if (product.soldAmount > product.productStock) {
+      req.session.message = {
+        type: "danger",
+        message: "Sold amount exceeds available stock",
+      };
+      return res.redirect("/"); // Redirect or handle error
+    }
+
+    // Save the updated product
+    await product.save();
+
+    // Redirect to product list or success page
+    res.redirect("/"); // Redirect to the products page or wherever appropriate
+  } catch (err) {
+    console.error('Error updating product sold amount:', err);
+    req.session.message = {
+      type: 'danger',
+      message: 'Error updating product sold amount',
+    };
+    res.redirect('/'); // Redirect or handle error
+  }
+};
+
 
 
 

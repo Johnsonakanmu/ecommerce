@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
+    sessionId:{
+      type: DataTypes.STRING,
+      allowNull:true
+    },
     firstname: { 
       type: DataTypes.STRING,
       allowNull: false,

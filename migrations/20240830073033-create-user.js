@@ -9,50 +9,54 @@ module.exports = {
         primaryKey: true,
         type:  DataTypes.INTEGER
       },
+      sessionId:{
+        type: DataTypes.STRING,
+        allowNull:true
+      },
       firstname: { 
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastname: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true,  
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       address: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       phone: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       city: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       country: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       postal_code: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       state: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       isactive: {
         type: DataTypes.ENUM('true', 'false'), 
-        allowNull: false,
+        allowNull: true,
         defaultValue: 'true', 
     },
       createdAt: {

@@ -74,9 +74,11 @@ module.exports = (sequelize, DataTypes) => {
     imageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,  
-      },
+    },
+    soldAmount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     },
   }, {
     sequelize,

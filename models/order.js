@@ -16,26 +16,25 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Order.init({
-    status: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'pending', // Set a default if needed
-    },
     userId: {
       type: DataTypes.STRING,
       allowNull: false
     },
+    // orderCartId: { 
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false
+    // },
     firstname: { 
       type: DataTypes.STRING,
       allowNull: false,
     },
     lastname: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: true,  
     },
     phone: {

@@ -9,13 +9,17 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
+      userId: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       productId: {
         type: DataTypes.INTEGER,  
         allowNull: false,
       },
-      orderId: {
-        type: DataTypes.INTEGER,  
-        allowNull: false,
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       productName: {
         type: DataTypes.STRING,
@@ -39,19 +43,16 @@ module.exports = {
         allowNull: false,  
       },
       amount: {
-        type: DataTypes.DECIMAL(10, 2),  
-        allowNull: false,  
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
       },
-      imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-          isUrl: true,  
-        },
-      },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: true,
+      orderId: {  // This foreign key connects the OrderCart to Order
+        type: DataTypes.INTEGER,
+        allowNull: true, // It can be null initially if the cart hasn't been converted into an order
+        references: {
+          model: 'orders',
+          key: 'id'
+        }
       },
       createdAt: {
         allowNull: false,

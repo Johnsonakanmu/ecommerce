@@ -9,26 +9,21 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      status: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'pending', // Set a default if needed
-      },
       userId: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      productId:{
-        type: DataTypes.STRING,
-        allowNull: false
-      },
+      // productId:{
+      //   type: DataTypes.STRING,
+      //   allowNull: false
+      // },
       firstname: { 
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastname: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -37,31 +32,31 @@ module.exports = {
       },
       phone: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       address: {
         type: DataTypes.STRING,
-        allowNull: false,   
+        allowNull: true,   
       },
       city: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       country: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       postal_code: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       shipping_method: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       payment_method: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

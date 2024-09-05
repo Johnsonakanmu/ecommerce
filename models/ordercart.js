@@ -9,20 +9,26 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({Order, Product}) {
+    static associate({User, Product, Order}) {
       // define association here
-      this.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
       this.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+      this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+      this.belongsTo(Order, { foreignKey: 'orderId',  as: 'order'
+      });
     }
   }
   OrderCart.init({
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     productId: {
       type: DataTypes.INTEGER,  
       allowNull: false,
     },
-    orderId: {
-      type: DataTypes.INTEGER,  
-      allowNull: false,
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     productName: {
       type: DataTypes.STRING,
@@ -46,20 +52,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,  
     },
     amount: {
-      type: DataTypes.DECIMAL(10, 2),  
-      allowNull: false,  
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
     },
-    imageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        isUrl: true,  
-      },
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    orderId: {  // This foreign key connects the OrderCart to Order
+      type: DataTypes.INTEGER,
+      allowNull: true, // It can be null initially if the cart hasn't been converted into an order
+      references: {
+        model: 'orders',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     tableName: "orderCarts",

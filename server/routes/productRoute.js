@@ -18,4 +18,6 @@ router.post('/update/:id', upload, productController.updateProduct);
 router.post('/delete/:id', productController.deleteProduct);
 router.delete('/delete/:id', productController.deleteProduct);
 
+router.post('/updateSoldAmount/:id', productController.updateProductSoldAmount);
+
 module.exports = router
