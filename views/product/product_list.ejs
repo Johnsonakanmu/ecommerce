@@ -33,7 +33,6 @@
                                             <th>Product Name & Size</th>
                                             <th>Price</th>
                                             <th>Stock</th>
-                                            <th>Category</th>
                                             <th>Rating</th>
                                             <th>Action</th>
                                         </tr>
@@ -55,8 +54,8 @@
                                                         <div>
                                                             <a href="#!" class="text-dark fw-medium fs-15"><%= row.productName %></a>
                                                             <p class="text-muted mb-0 mt-1 fs-13"><span>Size: <%= row.size %> : </span>S, M, L, XL</p>
+                                                            </div>                                                    
                                                         </div>
-                                                    </div>
                                                 </td>
                                                 <td>$<%= row.productPrice %></td>
                                                 <td>
@@ -72,7 +71,7 @@
                                                     Update Sold Amount
                                                   </a>
                                                 </td>
-                                                <td><%= row.productCategories %></td>
+        
                                                 <td>
                                                     <span class="badge p-1 bg-light text-dark fs-12 me-1">
                                                         <i class="bx bxs-star align-text-top fs-14 text-warning me-1"></i>

@@ -9,13 +9,19 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      userId: {
-        type: DataTypes.STRING,
-        allowNull: false
+      orderId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'orders',
+          key: 'id',
+        },
       },
       productId: {
-        type: DataTypes.INTEGER,  
-        allowNull: false,
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'products',
+          key: 'id',
+        },
       },
       imageUrl: {
         type: DataTypes.STRING,
@@ -23,7 +29,7 @@ module.exports = {
       },
       productName: {
         type: DataTypes.STRING,
-        allowNull: false,  // Typically, a product must have a name
+        allowNull: true,  // Typically, a product must have a name
       },
       size: {
         type: DataTypes.ENUM('XS', 'S', 'M', 'XL', 'XXL', '3XL'), // ENUM for sizes
@@ -35,16 +41,16 @@ module.exports = {
       },
       productStock: {
         type: DataTypes.INTEGER,
-        allowNull: false, 
+        allowNull: true, 
         defaultValue: 0,
       },
       productPrice: {
         type: DataTypes.DECIMAL(10, 2), 
-        allowNull: false,  
+        allowNull: true,  
       },
       amount: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
       },
       orderId: {  // This foreign key connects the OrderCart to Order
         type: DataTypes.INTEGER,

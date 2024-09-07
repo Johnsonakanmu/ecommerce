@@ -9,24 +9,28 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({User, OrderCart}) {
+    static associate({User, Product}) {
       this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-     this.hasMany(OrderCart, { foreignKey: 'orderId', as: 'orderCarts' });
 
+      // Many-to-many relationship with Product through orderCart
+      this.belongsToMany(Product, { through: 'orderCart', as: 'products' });
+
+      // Many-to-many relationship with Product through orderItem
+      this.belongsToMany(Product, { through: 'orderItem', as: 'orderItems' });
     }
   }
   Order.init({
     userId: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.INTEGER, // Should match the type of User's primary key
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
-    // orderCartId: { 
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false
-    // },
     firstname: { 
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     lastname: {
       type: DataTypes.STRING,
@@ -39,31 +43,31 @@ module.exports = (sequelize, DataTypes) => {
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: false,   
+      allowNull: true,   
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     country: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     postal_code: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     shipping_method: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     payment_method: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     }
   }, {
     sequelize,

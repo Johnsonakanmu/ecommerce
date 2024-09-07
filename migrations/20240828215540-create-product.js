@@ -9,20 +9,12 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      productName: {
-        type: DataTypes.STRING,
-        allowNull: false, // Typically, a product must have a name
-      },
       productCategories: {
         type: DataTypes.ENUM("Cloths", "Jersey", "Sportswear"), // ENUM data type
-        allowNull: false, // Categories are usually required
+        allowNull: true, // Categories are usually required
       },
       productBrand: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      productWeight: {
-        type: DataTypes.STRING, // Use STRING for weights that might include units (e.g., '2kg')
         allowNull: true,
       },
       gender: {
@@ -56,16 +48,12 @@ module.exports = {
       },
       productStock: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      tag: {
-        type: DataTypes.ENUM("Fashion", "Clothes", "Jersey"),
         allowNull: true,
+        defaultValue: 0,
       },
       productPrice: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
       },
       productDiscount: {
         type: DataTypes.FLOAT,
@@ -81,7 +69,7 @@ module.exports = {
       },
       soldAmount: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0
       },
       createdAt: {

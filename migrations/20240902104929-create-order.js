@@ -10,13 +10,13 @@ module.exports = {
         type: DataTypes.INTEGER
       },
       userId: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER, // Should match the type of User's primary key
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
-      // productId:{
-      //   type: DataTypes.STRING,
-      //   allowNull: false
-      // },
       firstname: { 
         type: DataTypes.STRING,
         allowNull: true,
@@ -27,8 +27,8 @@ module.exports = {
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,  
+        allowNull: true,
+        unique:false,  
       },
       phone: {
         type: DataTypes.STRING,

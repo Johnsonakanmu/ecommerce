@@ -10,8 +10,8 @@ module.exports = {
         type:  DataTypes.INTEGER
       },
       sessionId:{
-        type: DataTypes.STRING,
-        allowNull:true
+        type: DataTypes.INTEGER,
+        allowNull:false
       },
       firstname: { 
         type: DataTypes.STRING,

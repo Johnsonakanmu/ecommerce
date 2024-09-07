@@ -1,4 +1,4 @@
-const { Product } = require("../../models/index");
+const { Product, Category, User } = require("../../models/index");
 const fs = require("fs");
 
 
@@ -18,7 +18,7 @@ exports.getAllProducts = async (req, res) => {
     const { count, rows: products } = await Product.findAndCountAll({
       limit,
       offset: (currentPage - 1) * limit,
-      attributes: ['id', 'productName', 'productPrice', 'productStock', 'soldAmount', 'imageUrl', 'productCategories', 'size'],
+      attributes: ['id', 'productName', 'productPrice', 'productStock', 'soldAmount', 'imageUrl', 'size'],
       order: [['createdAt', 'DESC']], // Adjust order as needed
     });
 
@@ -79,72 +79,141 @@ exports.listView = async (req, res, next) => {
 
 
 exports.addProducts = (req, res, next) => {
-  res.render("product/add_product", {
-    title: "Product List | Order Your Jersey",
-    showSidebar: true,
+  Category.findAll({ attributes: ['id', 'productName'] }).then(categories => {
+    console.log(categories);  // This will log the categories to the console
+    res.render("product/add_product", {
+      title: "Product List | Order Your Jersey",
+      showSidebar: true,
+      categories: categories
+    });
+  }).catch(err => {
+    console.error('Error fetching categories:', err);
   });
 };
 
+
 exports.addProduct = async (req, res, next) => {
   const {
-    productName, productCategories, productBrand, productWeight, description, gender, color, size,
-    tagNumber, productStock, tag, productPrice, productDiscount, productTax, imageUrl,
+    categoryId,
+    productName,
+    productBrand,
+    productWeight,
+    description,
+    gender,
+    color,
+    size,
+    tagNumber,
+    productStock,
+    tag,
+    productPrice,
+    productDiscount,
+    productTax,
   } = req.body;
-  
+
   try {
+    // Fetch the user manually by ID (assuming you are using a static user ID for now)
+    const userId = 1; // Replace with the correct ID of the manually created user
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    // Ensure categoryId is provided
+    if (!categoryId) {
+      throw new Error("Category ID is required.");
+    }
 
     // Calculate the discounted price
-    const discountedPrice = productPrice - productDiscount;
+    const discountedPrice = productPrice - (productDiscount || 0); // Ensure discount is applied correctly
 
     // Calculate the final price including tax
-    const finalPrice = discountedPrice + productTax;
+    const finalPrice = discountedPrice + (productTax || 0); // Ensure tax is applied correctly
 
-    // Create the product
-    const product = await Product.create({
-      productName,  productCategories, productBrand, productWeight, gender, color, size,
-      description, tagNumber, productStock, tag, productPrice, productDiscount, discountedPrice,
-      productTax, finalPrice, imageUrl: req.file.filename,
-    });
+    // Check if the file was uploaded
+    if (!req.file) {
+      throw new Error("Product image is required.");
+    }
 
-    // Set a success message in the session
+    // Create a product object
+    const product = {
+      productName,
+      productBrand,
+      productWeight,
+      description,
+      gender,
+      color,
+      size,
+      tagNumber,
+      productStock,
+      tag,
+      productPrice,
+      productDiscount,
+      productTax,
+      imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
+      finalPrice,
+      categoryId, // Include the categoryId
+    };
+
+    // Fetch category and validate if it exists
+    const categoryObj = await Category.findByPk(categoryId);
+    if (!categoryObj) {
+      throw new Error("Category not found");
+    }
+
+    // Create the product for the manually fetched user
+    const productObj = await user.createProduct(product); // Use the manually fetched user to create the product
+    await productObj.setCategory(categoryObj); // Associate the product with the category
+
+    // Set success message and redirect
     req.session.message = {
       data: product,
       type: "success",
       message: "Product added successfully",
     };
-
-    // Redirect to the home page
     res.redirect("/");
   } catch (err) {
-    // Log the error and send a JSON response
-    console.error(err);
-    res.json({ message: err.message, type: "danger" });
+    // Log the error and send a JSON response or redirect to an error page
+    console.error("Error adding product:", err);
+
+    req.session.message = {
+      type: "danger",
+      message: err.message,
+    };
+
+    res.redirect("/error"); // Redirect to an error page or similar
   }
 };
+
+
+
 
 
 exports.getEditProductPage = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    // Use Sequelize's findByPk method to find the product by primary key
-    const products = await Product.findByPk(id);
-
+    // Fetch the product by primary key
+    const products = await Product.findByPk(id);  // Changed 'products' to 'product'
     if (!products) {
-      // Check if product is not found
-      req.session.message = {
-        type: "danger",
-        message: "Product not found",
-      };
-      return res.redirect("/");
+      throw new Error("Product not found");
     }
 
-    // Render the edit page with the product data
-    res.render("product/edit_product", {
+    // Fetch all categories for the dropdown
+    const categories = await Category.findAll({ attributes: ['id', 'productName'] });
+
+    // Prepare data for rendering
+    const viewsData = {
+      edit: true,
       title: "Edit Product | Order Your Jersey",
-      products: products, // Use `product` here, not `products`
-      showSidebar: true,
-    });
+      products,         // Changed to 'product'
+      categories,      // List of categories
+      showSidebar: true
+    };
+
+    // Render the edit product page
+    res.render("product/edit_product", viewsData);
+    
   } catch (err) {
     console.error("Error retrieving product:", err);
     req.session.message = {
@@ -155,12 +224,14 @@ exports.getEditProductPage = async (req, res, next) => {
   }
 };
 
+
+
 exports.updateProduct = async (req, res) => {
   const id = req.params.id;
 
   const {
-    productName, productCategories,productBrand, productWeight, description, gender,tagNumber,
-    productStock, tag, productPrice, productDiscount,productTax, imageUrl,
+    productName, productBrand, description, gender,tagNumber,
+    productStock, productPrice, productDiscount,productTax, imageUrl, categoryId
   } = req.body;
 
   let new_image = "";
@@ -198,23 +269,19 @@ exports.updateProduct = async (req, res) => {
 
     // Update the product properties
     products.productName = productName;
-    products.productCategories = productCategories;
+    products.categoryId = categoryId;
     products.productBrand = productBrand;
-    products.productWeight = productWeight;
     products.gender = gender;
     products.image = new_image; // Corrected from `products.image: new_image`
     products.description = description;
-    // products.size = size; 
-    // products.color = color;
     products.tagNumber = tagNumber;
     products.productStock = productStock;
-    products.tag = tag;
     products.productPrice = productPrice;
     products.productDiscount = productDiscount;
     products.productTax = productTax;
     products.discountedPrice = discountedPrice; 
     products.finalPrice = finalPrice; 
-
+    
     finalPrice
 
     // Save the updated product
@@ -223,6 +290,7 @@ exports.updateProduct = async (req, res) => {
     // Redirect or render the page after successful update
     req.session.message = {
       type: "success",
+      products: products,
       message: "Product updated successfully",
     };
     res.redirect("/"); // Redirect to home or the desired page

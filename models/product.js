@@ -7,29 +7,29 @@ module.exports = (sequelize, DataTypes) => {
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      */
-    static associate({ OrderCart }) {
-      // Correct association for OrderItem
-     this.hasMany(OrderCart, { foreignKey: 'productId', as: 'orderCarts' });
+    static associate({ User, Category, Order,  }) {
+      this.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
+
+      this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+      // Many-to-many relationship with Order through orderCart
+      this.belongsToMany(Order, { through: 'orderCart', as: 'orders' });
+
+      // Many-to-many relationship with Order through orderItem
+      this.belongsToMany(Order, { through: 'orderItem', as: 'orderItems' });
+
     }
   }
 
   Product.init({
     productName: {
       type: DataTypes.STRING,
-      allowNull: false,  // Typically, a product must have a name
-    },
-    productCategories: {
-      type: DataTypes.ENUM('Cloths', 'Jersey', 'Sportswear'), // ENUM data type
-      allowNull: false,  // Categories are usually required
+      allowNull: true,  // Typically, a product must have a name
     },
     productBrand: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    productWeight: {
-      type: DataTypes.STRING, // Use STRING for weights that might include units (e.g., '2kg')
-      allowNull: true,
-    },
+   
     gender: {
       type: DataTypes.ENUM('Men', 'Women', 'Other'), // ENUM for gender categories
       allowNull: true,
@@ -52,16 +52,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     productStock: {
       type: DataTypes.INTEGER,
-      allowNull: false, 
+      allowNull: true, 
       defaultValue: 0,
-    },
-    tag: {
-      type: DataTypes.ENUM('Fashion', 'Clothes', 'Jersey'),
-      allowNull: true,
     },
     productPrice: {
       type: DataTypes.DECIMAL(10, 2), 
-      allowNull: false,  
+      allowNull: true,  
     },
     productDiscount: {
       type: DataTypes.FLOAT, 
@@ -77,9 +73,25 @@ module.exports = (sequelize, DataTypes) => {
     },
     soldAmount: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0
     },
+    categoryId: {  // Foreign key for Category
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'categories',  // Name of the Category table
+        key: 'id'
+      }
+    },
+    userId: {  // Foreign key for User
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     tableName: 'products',

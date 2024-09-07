@@ -9,7 +9,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const methodOverride = require('method-override');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+
 
 
 
@@ -55,11 +56,13 @@ app.set('view engine', 'ejs');
 const productRoutes = require('./server/routes/productRoute')
 const authRoutes = require('./server/routes/authRoute')
 const itemRoutes = require('./server/routes/itemRoute')
+const categoryRoutes = require('./server/routes/catergoryRoute');
 
 
 app.use('/', productRoutes);
 app.use('/', authRoutes)
 app.use('/', itemRoutes);
+app.use('/', categoryRoutes)
 
 
 

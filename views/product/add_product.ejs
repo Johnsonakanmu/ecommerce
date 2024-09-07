@@ -20,29 +20,25 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <label for="productCategories" class="form-label">Product Categories</label>
-                                    <select class="form-control" id="productCategories" name="productCategories" data-choices data-choices-groups data-placeholder="Select Categories">
-                                        <option value="">Choose a category</option>
-                                        <option value="Cloths">Cloths</option>
-                                        <option value="Jersey">Jersey</option>
-                                        <option value="Sportswear">Sportswear</option>
+                                    <label for="categoryId" class="form-label">Product Categories</label>
+                                    <select name="categoryId" id="categoryId" class="form-control">
+                                      <option value="">Select Category</option>
+                                      <% categories.forEach((category) => { %>
+                                        <option value="<%= category.id %>">
+                                          <%= category.productName %>
+                                        </option>
+                                      <% }) %>
                                     </select>
-                                </div>
-                            </div>
+                                  </div>
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="productBrand" class="form-label">Brand</label>
                                         <input type="text" id="productBrand" name="productBrand" class="form-control" placeholder="Brand Name">
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label for="productWeight" class="form-label">Weight</label>
-                                        <input type="text" id="productWeight" name="productWeight" class="form-control" placeholder="In gm & kg">
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
+                
+                                <div class="col-lg-6">
                                     <label for="gender" class="form-label">Gender</label>
                                     <select class="form-control" id="gender" name="gender" data-choices data-choices-groups data-placeholder="Select Gender">
                                         <option value="">Select Gender</option>
@@ -102,6 +98,19 @@
                                     </div>
 
                                 </div>
+                                <!-- <div class="row mt-4">
+                                    <div class="col-lg-12">
+                                      <div class="mb-3">
+                                        <label for="categoryId" class="form-label">Select category</label>
+                                        <select name="categoryId" id="categoryId" class="form-control">
+                                            <option value="">Select Category</option>
+                                          <% categories.forEach((category) => { %>
+                                            <option value="<%= category.id %>"><%= category.productName %></option>
+                                          <% }) %>    
+                                        </select>
+                                      </div>
+                                    </div>
+                                </div> -->
                                 
                                 <div class="row mt-4">
                                     <div class="col-lg-12">
@@ -113,7 +122,7 @@
                                </div>
 
                                <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <!-- Tag Number Input -->
                                     <div class="mb-3">
                                         <label for="tagNumber" class="form-label">Tag Number</label>
@@ -121,7 +130,7 @@
                                     </div>
                                 </div>
                             
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <!-- Stock Input -->
                                     <div class="mb-3">
                                         <label for="productStock" class="form-label">Stock</label>
@@ -129,15 +138,7 @@
                                     </div>
                                 </div>
                             
-                                <div class="col-lg-4">
-                                    <!-- Tag Selection -->
-                                    <label for="tag" class="form-label">Tags</label>
-                                    <select class="form-control" name="tag" id="tag" data-choices data-choices-removeItem multiple>
-                                        <option value="Fashion" selected>Fashion</option>
-                                        <option value="Clothes">Clothes</option>
-                                        <option value="Jersey">Jersey</option>
-                                    </select>
-                                </div>
+                                
                             </div>
 
                             <div class="row">

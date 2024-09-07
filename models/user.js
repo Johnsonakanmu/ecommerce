@@ -9,63 +9,63 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({Order}) {
-      // define association here
-      User.hasMany(Order, {
-        foreignKey: 'userId', // This foreign key should match the field in your Order model
-        as: 'orders' // Alias for the association
-      });
+    static associate({Category, Product, Order}) {
+      this.hasMany(Category, { foreignKey: 'userId', as: 'categories' });
+      this.hasOne(Order, { foreignKey: 'userId', as: 'order' }); // Updated association
+
+      // User has many Products
+      this.hasMany(Product, { foreignKey: 'userId', as: 'products' });
     }
   }
   User.init({
     sessionId:{
-      type: DataTypes.STRING,
-      allowNull:true
+      type: DataTypes.INTEGER,
+      allowNull:false
     },
     firstname: { 
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     lastname: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,  
+      allowNull: true,
+      unique: false,  
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     country: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     postal_code: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     state: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     isactive: {
       type: DataTypes.ENUM('true', 'false'), 
-      allowNull: false,
+      allowNull: true,
       defaultValue: 'true', 
   },
   }, {
