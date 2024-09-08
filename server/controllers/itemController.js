@@ -1,6 +1,5 @@
 const {Product, Order, OrderCart, User, Category} = require('../../models/index');
 const { Sequelize } = require('sequelize'); 
-const crypto = require('crypto');
 exports.itemsList = async (req, res, next) => {
     try {
         // Extract page and limit from query parameters, set defaults
@@ -15,12 +14,12 @@ exports.itemsList = async (req, res, next) => {
         const products = await Product.findAll({
           include: [
             {
-              model: Category,  // Include the Category model
-              as: 'category',  // Specify the alias used in the association
+              model: Category,  
+              as: 'category',  
             },
             {
-              model: User,      // Include the User model
-              as: 'user',      // Specify the alias used in the association
+              model: User,      
+              as: 'user',      
             }
         ],
             limit: limit, // Number of products to fetch
@@ -45,6 +44,9 @@ exports.itemsList = async (req, res, next) => {
         res.json({ message: err.message });
     }
 };
+
+
+
 
 exports.searchItem = async (req, res) => {
     try {
@@ -84,45 +86,52 @@ exports.searchItem = async (req, res) => {
 };
 
 
+
+
 exports.postCart = async (req, res) => {
   const productId = req.params.productId;
-  let newQuantity = 1;
+  const userId = req.user.id;
+  const quantity = 1;
 
   try {
-    // Directly fetch the user with ID 1
-    const userId = 1;  // Static user ID
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).send('User not found');
+    let order = await Order.findOne({ where: { userId: userId } });
+    if (!order) {
+      order = await Order.create({ userId: userId });
     }
 
-    // Fetch or create the cart associated with this user
-    let fetchedCart = await Order.findOne({ where: { userId: user.id } });
-    if (!fetchedCart) {
-      fetchedCart = await Order.create({ userId: user.id });
-    }
-
-    // Check if product is already in the cart
     const product = await Product.findByPk(productId);
     if (!product) {
-      return res.status(404).send('Product not found');
+      return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Use the `addProduct` method to handle many-to-many relationships
-    const existingProducts = await fetchedCart.getProducts({ where: { id: productId } });
-    if (existingProducts.length > 0) {
-      // Product exists in cart, update quantity
-      const existingProduct = existingProducts[0];
-      newQuantity = existingProduct.orderProduct.productStock + 1;  // Adjust based on how you store quantity
-      await fetchedCart.addProduct(product, { through: { productStock: newQuantity } });
+    const productPrice = parseFloat(product.price);
+
+    let orderItem = await OrderCart.findOne({ where: { orderId: order.id, productId: product.id } });
+    if (orderItem) {
+      orderItem.quantity += quantity;
+      orderItem.price = parseFloat(orderItem.price) + productPrice;
+      await orderItem.save();
     } else {
-      // Add new product to the cart
-      await fetchedCart.addProduct(product, { through: { productStock: newQuantity } });
+      await OrderCart.create({
+        orderId: order.id,
+        productId: product.id,
+        imageUrl: product.imageUrl,
+        productName: product.productName,
+        size: product.size,
+        color: product.color,
+        quantity,
+        price: productPrice,
+        amount: productPrice * quantity
+      });
     }
+
+    order.totalQuantity += quantity;
+    order.totalPrice = parseFloat(order.totalPrice) + productPrice;
+    await order.save();
 
     res.redirect('/cart');
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -132,66 +141,11 @@ exports.postCart = async (req, res) => {
 
 
 
-// exports.postCart = async (req, res, next) => {
-//   try {
-//     let userId = req.session.userId  ;
 
-//     // Step 1: Check if the user is logged in (i.e., if userId is in session)
-//     if (!userId) {
-//       // Generate a sessionId if the user is not logged in
-//       const sessionId = `sessionId_${crypto.randomUUID()}`;
 
-//       // Step 2: Create a new user with only a sessionId
-//       const newUser = await User.create({ sessionId });  // Save sessionId in DB
-//       userId = newUser.id;  // Store the userId in the session
 
-//       // Step 3: Store userId and sessionId in the session
-//       req.session.userId = userId;
-//       req.session.sessionId = sessionId;
-//     }
 
-//     const { productId } = req.body;
 
-//     // Step 4: Find the product based on the productId
-//     const product = await Product.findByPk(productId);
-//        console.log(product)
-//     if (!product) {
-//       return res.status(404).send('Product not found');
-//     }
-//     console.log('Product:', product);
-
-//     // Step 5: Find or create the cart item for the user
-//     let cartItem = await OrderCart.findOne({
-//       where: { userId, productId }
-//     });
-
-//     if (cartItem) {
-//       // If the cart item exists, update the quantity and amount
-//       cartItem.productStock += 1;
-//       cartItem.amount = cartItem.productStock * cartItem.productPrice;
-//       await cartItem.save();
-//     } else {
-//       // If the cart item doesn't exist, create a new entry in the OrderCart table
-//       await OrderCart.create({
-//         userId,
-//         productId,
-//         imageUrl: product.imageUrl,
-//         productName: product.productName,
-//         size: product.size,
-//         color: product.color,
-//         productStock: 1,
-//         productPrice: product.productPrice,
-//         amount: product.productPrice // Initial amount is the product price
-//       });
-//     }
-
-//     // Step 6: Redirect to the cart page or send a success response
-//     res.redirect('/items/cart');  // You can change this to API response if needed
-//   } catch (error) {
-//     console.error('Error adding to cart:', error);
-//     res.status(500).send('Server error');
-//   }
-// };
 
 
 
@@ -200,7 +154,7 @@ exports.postCart = async (req, res) => {
 
 exports.getCart = async (req, res, next) => {
   try {
-    const userId = req.session.userId; // Retrieve the user ID from the session
+    const userId = req.query.userId; // Retrieve the user ID from the session
 
     // Check if the user is logged in
     if (!userId) {

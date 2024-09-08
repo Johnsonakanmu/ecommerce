@@ -75,7 +75,7 @@
                                </ul>
                                <p class="mb-0 fw-medium fs-15 text-dark"><%= rating.toFixed(1) %> <span class="text-muted fs-13">(<%= product.reviews || 0 %> Reviews)</span></p>
                            </div>
-                           <h2 class="fw-medium my-3">$<%= product.productPrice || 0 %> <span class="fs-16 text-decoration-line-through">$<%= product.productDiscount || 0 %></span><small class="text-danger ms-2">(<%= product.productTax || 0 %> Off)</small></h2>
+                           <h2 class="fw-medium my-3">$<%= product.price || 0 %> <span class="fs-16 text-decoration-line-through">$<%= product.discount || 0 %></span><small class="text-danger ms-2">(<%= product.tax || 0 %> Off)</small></h2>
 
                              <div class="row align-items-center g-2 mt-3">
                                   <div class="col-lg-3">

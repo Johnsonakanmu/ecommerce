@@ -240,15 +240,14 @@
                                               </div>
                                         </div>
                                         <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
-                                             <span class="text-muted text-decoration-line-through">$<%= product.productPrice || 0 %></span> $<%= product.productDiscount || 0 %> <small class="text-muted"> (<%= product.productTax || 0 %> Off)</small>
+                                             <span class="text-muted text-decoration-line-through">$<%= product.price || 0 %></span> $<%= product.discount || 0 %> <small class="text-muted"> (<%= product.tax || 0 %> Off)</small>
                                         </h4>
                                         <form action="/cart" method="POST" class="d-flex gap-2">
-                                             <input type="hidden" name="productId" value="productId" />
+                                             <input type="hidden" name="productId" value="<%= product.id %>" />
                                              <button type="submit" class="btn btn-outline-dark border border-secondary-subtle d-flex align-items-center justify-content-center gap-1 w-100">
-                                                 <i class='bx bx-cart align-middle'></i> Add To Cart
+                                               <i class='bx bx-cart align-middle'></i> Add To Cart
                                              </button>
-                                         </form>
-                                        
+                                           </form>
                                    </div>
 
                                    <span class="position-absolute top-0 end-0 p-3">

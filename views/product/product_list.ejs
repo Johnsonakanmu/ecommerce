@@ -57,9 +57,9 @@
                                                             </div>                                                    
                                                         </div>
                                                 </td>
-                                                <td>$<%= row.productPrice %></td>
+                                                <td>$<%= row.price %></td>
                                                 <td>
-                                                  <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.productStock %> Item(s)</span> Left</p>
+                                                  <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity %> Item(s)</span> Left</p>
                                                   <p class="mb-0 text-muted"><%= row.soldAmount %> Sold</p>
                                                   <!-- Hidden form to update sold amount -->
                                                   <form id="updateSoldForm<%= row.id %>" action="/updateSoldAmount/<%= row.id %>" method="POST" style="display: none;">

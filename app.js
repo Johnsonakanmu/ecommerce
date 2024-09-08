@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
-
+const {User} = require('./models/index')
 
 
 
@@ -46,6 +46,17 @@ app.use((req, res, next) => {
     }
     next();
   });
+
+  app.use((req, res, next) => {
+    User.findByPk(3).then((user) => {
+      req.user = user;
+      next();
+    }).catch(err => {
+      console.log(err);
+      next(err);  
+    });
+  });
+
 
 app.use(express.static('uploads'))
 

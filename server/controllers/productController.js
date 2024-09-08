@@ -18,7 +18,7 @@ exports.getAllProducts = async (req, res) => {
     const { count, rows: products } = await Product.findAndCountAll({
       limit,
       offset: (currentPage - 1) * limit,
-      attributes: ['id', 'productName', 'productPrice', 'productStock', 'soldAmount', 'imageUrl', 'size'],
+      attributes: ['id', 'productName', 'price', 'quantity', 'soldAmount', 'imageUrl', 'size'],
       order: [['createdAt', 'DESC']], // Adjust order as needed
     });
 
@@ -94,20 +94,8 @@ exports.addProducts = (req, res, next) => {
 
 exports.addProduct = async (req, res, next) => {
   const {
-    categoryId,
-    productName,
-    productBrand,
-    productWeight,
-    description,
-    gender,
-    color,
-    size,
-    tagNumber,
-    productStock,
-    tag,
-    productPrice,
-    productDiscount,
-    productTax,
+    categoryId, productName, productBrand, description,gender,color,
+    size, tagNumber, quantity, tag, price,discount,tax,
   } = req.body;
 
   try {
@@ -125,10 +113,10 @@ exports.addProduct = async (req, res, next) => {
     }
 
     // Calculate the discounted price
-    const discountedPrice = productPrice - (productDiscount || 0); // Ensure discount is applied correctly
+    const discountedPrice = price - (discount || 0); // Ensure discount is applied correctly
 
     // Calculate the final price including tax
-    const finalPrice = discountedPrice + (productTax || 0); // Ensure tax is applied correctly
+    const finalPrice = discountedPrice + (tax || 0); // Ensure tax is applied correctly
 
     // Check if the file was uploaded
     if (!req.file) {
@@ -137,19 +125,8 @@ exports.addProduct = async (req, res, next) => {
 
     // Create a product object
     const product = {
-      productName,
-      productBrand,
-      productWeight,
-      description,
-      gender,
-      color,
-      size,
-      tagNumber,
-      productStock,
-      tag,
-      productPrice,
-      productDiscount,
-      productTax,
+      productName,productBrand,description,gender,color,size,
+      tagNumber,quantity,tag,price,discount,tax,
       imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
       finalPrice,
       categoryId, // Include the categoryId
@@ -231,7 +208,7 @@ exports.updateProduct = async (req, res) => {
 
   const {
     productName, productBrand, description, gender,tagNumber,
-    productStock, productPrice, productDiscount,productTax, imageUrl, categoryId
+    quantity, price, discount,tax, imageUrl, categoryId
   } = req.body;
 
   let new_image = "";
@@ -264,8 +241,8 @@ exports.updateProduct = async (req, res) => {
     }
 
     // Calculate the discounted price and final price including tax
-    const discountedPrice = productPrice - productDiscount;
-    const finalPrice = discountedPrice + productTax;
+    const discountedPrice = quantity - discount;
+    const finalPrice = discountedPrice + tax;
 
     // Update the product properties
     products.productName = productName;
@@ -275,10 +252,10 @@ exports.updateProduct = async (req, res) => {
     products.image = new_image; // Corrected from `products.image: new_image`
     products.description = description;
     products.tagNumber = tagNumber;
-    products.productStock = productStock;
-    products.productPrice = productPrice;
-    products.productDiscount = productDiscount;
-    products.productTax = productTax;
+    products.quantity = quantity;
+    products.price = price;
+    products.discount = discount;
+    products.tax = tax;
     products.discountedPrice = discountedPrice; 
     products.finalPrice = finalPrice; 
     

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsToMany(Product, { through: 'orderCart', as: 'products' });
 
       // Many-to-many relationship with Product through orderItem
-      this.belongsToMany(Product, { through: 'orderItem', as: 'orderItems' });
+      this.belongsToMany(Product, { through: 'orderCart', as: 'orderCarts' });
     }
   }
   Order.init({

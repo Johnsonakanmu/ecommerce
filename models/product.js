@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsToMany(Order, { through: 'orderCart', as: 'orders' });
 
       // Many-to-many relationship with Order through orderItem
-      this.belongsToMany(Order, { through: 'orderItem', as: 'orderItems' });
+      this.belongsToMany(Order, { through: 'orderCart', as: 'orderCarts' });
 
     }
   }
@@ -50,20 +50,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    productStock: {
+    quantity: {
       type: DataTypes.INTEGER,
       allowNull: true, 
       defaultValue: 0,
     },
-    productPrice: {
+    price: {
       type: DataTypes.DECIMAL(10, 2), 
       allowNull: true,  
     },
-    productDiscount: {
+    discount: {
       type: DataTypes.FLOAT, 
       allowNull: true,
     },
-    productTax: {
+    tax: {
       type: DataTypes.FLOAT, 
       allowNull: true,
     },

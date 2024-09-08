@@ -18,15 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    sessionId:{
-      type: DataTypes.INTEGER,
-      allowNull:false
-    },
-    firstname: { 
+    firstName: { 
       type: DataTypes.STRING,
       allowNull: true,
     },
-    lastname: {
+    lastName: {
       type: DataTypes.STRING,
       allowNull: true,
     },

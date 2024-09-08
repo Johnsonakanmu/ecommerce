@@ -34,20 +34,8 @@ exports.postAddCategoryPage = async (req, res) => {
   const { productName, description } = req.body;
 
   try {
-    // Find the user with ID 1 (the manually created user)
-    const user = await User.findByPk(2); // Use ID 1 explicitly
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const { firstname, lastname } = user;
-
-    // Log or use firstname and lastname (optional)
-    console.log(`Adding category for ${firstname} ${lastname}`);
-
-    // Use the `createCategory` method to add the category for this user
-    await user.createCategory({
+    req.user.createCategory({
       productName,
       description
     });
@@ -55,7 +43,7 @@ exports.postAddCategoryPage = async (req, res) => {
     // Set a success message in the session
     req.session.message = {
       type: "success",
-      message: `Category added successfully by ${firstname} ${lastname}`,
+      message: `Category added successfully`,
     };
 
     // Redirect to the categories page

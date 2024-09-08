@@ -45,12 +45,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Dark', 'Yellow', 'White', 'Red', 'Green', 'Blue', 'Sky', 'Gray'), // ENUM for colors
       allowNull: true,
     },
-    productStock: {
+    quantity: {
       type: DataTypes.INTEGER,
       allowNull: true, 
       defaultValue: 0,
     },
-    productPrice: {
+    price: {
       type: DataTypes.DECIMAL(10, 2), 
       allowNull: true,  
     },

@@ -46,21 +46,21 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      productStock: {
+      quantity: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: true, 
         defaultValue: 0,
       },
-      productPrice: {
-        type: DataTypes.DECIMAL(10, 2),
+      price: {
+        type: DataTypes.DECIMAL(10, 2), 
+        allowNull: true,  
+      },
+      discount: {
+        type: DataTypes.FLOAT, 
         allowNull: true,
       },
-      productDiscount: {
-        type: DataTypes.FLOAT,
-        allowNull: true,
-      },
-      productTax: {
-        type: DataTypes.FLOAT,
+      tax: {
+        type: DataTypes.FLOAT, 
         allowNull: true,
       },
       imageUrl: {
