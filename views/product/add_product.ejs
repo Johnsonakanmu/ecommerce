@@ -20,14 +20,12 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <label for="categoryId" class="form-label">Product Categories</label>
-                                    <select name="categoryId" id="categoryId" class="form-control">
-                                      <option value="">Select Category</option>
-                                      <% categories.forEach((category) => { %>
-                                        <option value="<%= category.id %>">
-                                          <%= category.productName %>
-                                        </option>
-                                      <% }) %>
+                                    <label for="productCategories" class="form-label">Product Categories</label>
+                                    <select name="productCategories" id="productCategories" class="form-control">
+                                        <option value="">Select Category</option>
+                                        <option value="Jersey">Jersey</option>
+                                        <option value="Clothes">Clothes</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                   </div>
                             <div class="row">
@@ -98,19 +96,6 @@
                                     </div>
 
                                 </div>
-                                <!-- <div class="row mt-4">
-                                    <div class="col-lg-12">
-                                      <div class="mb-3">
-                                        <label for="categoryId" class="form-label">Select category</label>
-                                        <select name="categoryId" id="categoryId" class="form-control">
-                                            <option value="">Select Category</option>
-                                          <% categories.forEach((category) => { %>
-                                            <option value="<%= category.id %>"><%= category.productName %></option>
-                                          <% }) %>    
-                                        </select>
-                                      </div>
-                                    </div>
-                                </div> -->
                                 
                                 <div class="row mt-4">
                                     <div class="col-lg-12">

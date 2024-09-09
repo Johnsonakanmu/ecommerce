@@ -2,17 +2,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('orderCarts', {
+    await queryInterface.createTable('cartItems', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      orderId: {
+      cartId: {
         type: DataTypes.INTEGER,
         references: {
-          model: 'orders',
+          model: 'carts',
           key: 'id',
         },
       },
@@ -52,14 +52,6 @@ module.exports = {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
       },
-      orderId: {  // This foreign key connects the OrderCart to Order
-        type: DataTypes.INTEGER,
-        allowNull: true, // It can be null initially if the cart hasn't been converted into an order
-        references: {
-          model: 'orders',
-          key: 'id'
-        }
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE
@@ -71,6 +63,6 @@ module.exports = {
     });
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable('orderCarts');
+    await queryInterface.dropTable('cartItems');
   }
 };

@@ -7,7 +7,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type:  DataTypes.INTEGER
+        type: DataTypes.INTEGER
       },
       firstName: { 
         type: DataTypes.STRING,
@@ -20,7 +20,7 @@ module.exports = {
       email: {
         type: DataTypes.STRING,
         allowNull: true,
-        unique: true,  
+        unique: false,  
       },
       password: {
         type: DataTypes.STRING,
@@ -50,22 +50,17 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      isactive: {
-        type: DataTypes.ENUM('true', 'false'), 
-        allowNull: true,
-        defaultValue: 'true', 
-    },
       createdAt: {
         allowNull: false,
-        type:  DataTypes.DATE
+        type: DataTypes.DATE
       },
       updatedAt: {
         allowNull: false,
-        type:  DataTypes.DATE
+        type: DataTypes.DATE
       }
     });
   },
-  async down(queryInterface,  DataTypes) {
+  async down(queryInterface, DataTypes) {
     await queryInterface.dropTable('users');
   }
 };

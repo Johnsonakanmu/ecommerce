@@ -1,35 +1,49 @@
 'use strict';
-const { Model } = require('sequelize');
-
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Category, Order,  }) {
-      this.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
+    static associate({User, Cart, CartItem}) {
 
       this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-      // Many-to-many relationship with Order through orderCart
-      this.belongsToMany(Order, { through: 'orderCart', as: 'orders' });
-
-      // Many-to-many relationship with Order through orderItem
-      this.belongsToMany(Order, { through: 'orderCart', as: 'orderCarts' });
+      // Product belongs to many carts through CartItem
+      this.belongsToMany(Cart, {
+        through: CartItem,   // Use CartItem as the join table
+        foreignKey: 'productId',
+        otherKey: 'cartId',
+        as: 'carts'
+      });
 
     }
   }
-
   Product.init({
+    userId: {  // Foreign key for User
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
     productName: {
       type: DataTypes.STRING,
       allowNull: true,  // Typically, a product must have a name
+    },
+    productCategories: {
+      type: DataTypes.ENUM('Jersey', 'Clothes', 'Other'), // ENUM for gender categories
+      allowNull: true,
     },
     productBrand: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-   
+
     gender: {
       type: DataTypes.ENUM('Men', 'Women', 'Other'), // ENUM for gender categories
       allowNull: true,
@@ -76,27 +90,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: 0
     },
-    categoryId: {  // Foreign key for Category
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'categories',  // Name of the Category table
-        key: 'id'
-      }
-    },
-    userId: {  // Foreign key for User
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id'
-      }
-    }
   }, {
     sequelize,
     tableName: 'products',
     modelName: 'Product',
   });
-
   return Product;
 };

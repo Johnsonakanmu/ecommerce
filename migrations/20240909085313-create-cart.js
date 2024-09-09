@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('orders', {
+    await queryInterface.createTable('carts', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -28,7 +28,7 @@ module.exports = {
       email: {
         type: DataTypes.STRING,
         allowNull: true,
-        unique:false,  
+        unique: true,  
       },
       phone: {
         type: DataTypes.STRING,
@@ -69,6 +69,6 @@ module.exports = {
     });
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable('orders');
+    await queryInterface.dropTable('carts');
   }
 };

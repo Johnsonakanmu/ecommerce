@@ -78,24 +78,21 @@ exports.listView = async (req, res, next) => {
 };
 
 
+
+
 exports.addProducts = (req, res, next) => {
-  Category.findAll({ attributes: ['id', 'productName'] }).then(categories => {
-    console.log(categories);  // This will log the categories to the console
-    res.render("product/add_product", {
-      title: "Product List | Order Your Jersey",
-      showSidebar: true,
-      categories: categories
-    });
-  }).catch(err => {
-    console.error('Error fetching categories:', err);
+  res.render("product/add_product", {
+    title: "Product List | Order Your Jersey",
+    showSidebar: true,
   });
 };
 
 
+
 exports.addProduct = async (req, res, next) => {
   const {
-    categoryId, productName, productBrand, description,gender,color,
-    size, tagNumber, quantity, tag, price,discount,tax,
+    productName, productCategories, productBrand, description, gender, color,
+    size, tagNumber, quantity, tag, price, discount, tax
   } = req.body;
 
   try {
@@ -105,11 +102,6 @@ exports.addProduct = async (req, res, next) => {
 
     if (!user) {
       throw new Error("User not found.");
-    }
-
-    // Ensure categoryId is provided
-    if (!categoryId) {
-      throw new Error("Category ID is required.");
     }
 
     // Calculate the discounted price
@@ -125,22 +117,14 @@ exports.addProduct = async (req, res, next) => {
 
     // Create a product object
     const product = {
-      productName,productBrand,description,gender,color,size,
-      tagNumber,quantity,tag,price,discount,tax,
+      productName, productCategories, productBrand, description, gender, color, size,
+      tagNumber, quantity, tag, price, discount, tax,
       imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
       finalPrice,
-      categoryId, // Include the categoryId
     };
 
-    // Fetch category and validate if it exists
-    const categoryObj = await Category.findByPk(categoryId);
-    if (!categoryObj) {
-      throw new Error("Category not found");
-    }
-
     // Create the product for the manually fetched user
-    const productObj = await user.createProduct(product); // Use the manually fetched user to create the product
-    await productObj.setCategory(categoryObj); // Associate the product with the category
+    const productObj = await user.createProduct(product);
 
     // Set success message and redirect
     req.session.message = {
@@ -166,6 +150,7 @@ exports.addProduct = async (req, res, next) => {
 
 
 
+
 exports.getEditProductPage = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -177,14 +162,12 @@ exports.getEditProductPage = async (req, res, next) => {
     }
 
     // Fetch all categories for the dropdown
-    const categories = await Category.findAll({ attributes: ['id', 'productName'] });
 
     // Prepare data for rendering
     const viewsData = {
       edit: true,
       title: "Edit Product | Order Your Jersey",
-      products,         // Changed to 'product'
-      categories,      // List of categories
+      products,         // Changed to 'product'   
       showSidebar: true
     };
 
@@ -208,7 +191,7 @@ exports.updateProduct = async (req, res) => {
 
   const {
     productName, productBrand, description, gender,tagNumber,
-    quantity, price, discount,tax, imageUrl, categoryId
+    quantity, price, discount,tax, imageUrl, productCategories
   } = req.body;
 
   let new_image = "";
@@ -246,7 +229,6 @@ exports.updateProduct = async (req, res) => {
 
     // Update the product properties
     products.productName = productName;
-    products.categoryId = categoryId;
     products.productBrand = productBrand;
     products.gender = gender;
     products.image = new_image; // Corrected from `products.image: new_image`
@@ -258,6 +240,8 @@ exports.updateProduct = async (req, res) => {
     products.tax = tax;
     products.discountedPrice = discountedPrice; 
     products.finalPrice = finalPrice; 
+    products.productCategories = productCategories; 
+
     
     finalPrice
 

@@ -83,14 +83,12 @@
                                      </div>
                                  </div>
                                  <div class="col-lg-6">
-                                    <label for="categoryId" class="form-label">Product Categories</label>
-                                    <select name="categoryId" id="categoryId" class="form-control">
+                                    <label for="productCategories" class="form-label">Product Categories</label>
+                                    <select name="productCategories" id="productCategories" class="form-control">
                                       <option value="">Select Category</option>
-                                      <% categories.forEach((category) => { %>
-                                        <option value="<%= category.id %>" <%= category.id == products.categoryId ? "selected" : "" %>>
-                                          <%= category.productName %>
-                                        </option>
-                                      <% }) %>
+                                         <option value="Jersey" <%= products.productCategories === 'Jersey' ? 'selected' : '' %>>Jersey</option>
+                                         <option value="Clothes" <%= products.productCategories === 'Clothes' ? 'selected' : '' %>>Clothes</option>
+                                         <option value="Other" <%= products.productCategories === 'Other' ? 'selected' : '' %>>Other</option>
                                     </select>
                                   </div>
                                   

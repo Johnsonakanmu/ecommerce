@@ -3,23 +3,27 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Order extends Model {
+  class Cart extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({User, Product}) {
+    static associate({User, Product, CartItem}) {
+      // define association here
       this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+      this.hasMany(CartItem, { foreignKey: 'cartId', as: 'cartItems'}); // Cart and CartItem association
 
-      // Many-to-many relationship with Product through orderCart
-      this.belongsToMany(Product, { through: 'orderCart', as: 'products' });
-
-      // Many-to-many relationship with Product through orderItem
-      this.belongsToMany(Product, { through: 'orderCart', as: 'orderCarts' });
+      // Cart belongs to many products through CartItem
+      this.belongsToMany(Product, {
+        through: CartItem,   // Use CartItem as the join table
+        foreignKey: 'cartId',
+        otherKey: 'productId',
+        as: 'products'
+      });
     }
   }
-  Order.init({
+  Cart.init({
     userId: {
       type: DataTypes.INTEGER, // Should match the type of User's primary key
       allowNull: false,
@@ -71,8 +75,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    tableName: 'orders',
-    modelName: 'Order',
+    tableName: 'carts',
+    modelName: 'Cart',
   });
-  return Order;
+  return Cart;
 };

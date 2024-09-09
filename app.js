@@ -48,7 +48,7 @@ app.use((req, res, next) => {
   });
 
   app.use((req, res, next) => {
-    User.findByPk(3).then((user) => {
+    User.findByPk(1).then((user) => {
       req.user = user;
       next();
     }).catch(err => {
@@ -67,13 +67,13 @@ app.set('view engine', 'ejs');
 const productRoutes = require('./server/routes/productRoute')
 const authRoutes = require('./server/routes/authRoute')
 const itemRoutes = require('./server/routes/itemRoute')
-const categoryRoutes = require('./server/routes/catergoryRoute');
+// const categoryRoutes = require('./server/routes/catergoryRoute');
 
 
 app.use('/', productRoutes);
 app.use('/', authRoutes)
 app.use('/', itemRoutes);
-app.use('/', categoryRoutes)
+// app.use('/', categoryRoutes)
 
 
 

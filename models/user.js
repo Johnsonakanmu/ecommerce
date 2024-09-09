@@ -9,10 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({Category, Product, Order}) {
-      this.hasMany(Category, { foreignKey: 'userId', as: 'categories' });
-      this.hasOne(Order, { foreignKey: 'userId', as: 'order' }); // Updated association
-
+    static associate({ Product,Cart}) {
+      // define association here
+      this.hasOne(Cart, { foreignKey: 'userId', as: 'cart' }); // Updated association
       // User has many Products
       this.hasMany(Product, { foreignKey: 'userId', as: 'products' });
     }
@@ -59,12 +58,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    isactive: {
-      type: DataTypes.ENUM('true', 'false'), 
-      allowNull: true,
-      defaultValue: 'true', 
-  },
-  }, {
+   
+ }, {
     sequelize,
     tableName: 'users',
     modelName: 'User',

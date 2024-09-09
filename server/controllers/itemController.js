@@ -1,4 +1,4 @@
-const {Product, Order, OrderCart, User, Category} = require('../../models/index');
+const {Product, Cart, CartItem, User, } = require('../../models/index');
 const { Sequelize } = require('sequelize'); 
 exports.itemsList = async (req, res, next) => {
     try {
@@ -13,10 +13,6 @@ exports.itemsList = async (req, res, next) => {
         const productCount = await Product.count();
         const products = await Product.findAll({
           include: [
-            {
-              model: Category,  
-              as: 'category',  
-            },
             {
               model: User,      
               as: 'user',      
@@ -94,9 +90,9 @@ exports.postCart = async (req, res) => {
   const quantity = 1;
 
   try {
-    let order = await Order.findOne({ where: { userId: userId } });
-    if (!order) {
-      order = await Order.create({ userId: userId });
+    let cart = await Cart.findOne({ where: { userId: userId } });
+    if (!cart) {
+      cart = await Cart.create({ userId: userId });
     }
 
     const product = await Product.findByPk(productId);
@@ -106,14 +102,15 @@ exports.postCart = async (req, res) => {
 
     const productPrice = parseFloat(product.price);
 
-    let orderItem = await OrderCart.findOne({ where: { orderId: order.id, productId: product.id } });
-    if (orderItem) {
-      orderItem.quantity += quantity;
-      orderItem.price = parseFloat(orderItem.price) + productPrice;
-      await orderItem.save();
+    let cartItem = await CartItem.findOne({ where: { cartId: cart.id, productId: product.id } });
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      cartItem.price = productPrice;
+      cartItem.amount = productPrice * cartItem.quantity;
+      await cartItem.save();
     } else {
-      await OrderCart.create({
-        orderId: order.id,
+      await CartItem.create({
+        cartId: cart.id,
         productId: product.id,
         imageUrl: product.imageUrl,
         productName: product.productName,
@@ -125,9 +122,9 @@ exports.postCart = async (req, res) => {
       });
     }
 
-    order.totalQuantity += quantity;
-    order.totalPrice = parseFloat(order.totalPrice) + productPrice;
-    await order.save();
+    cart.totalQuantity = (cart.totalQuantity || 0) + quantity;
+    cart.totalPrice = (cart.totalPrice || 0) + (productPrice * quantity);
+    await cart.save();
 
     res.redirect('/cart');
   } catch (err) {
@@ -139,60 +136,86 @@ exports.postCart = async (req, res) => {
 
 
 
+// exports.getCart = async (req, res, next) => {
+//   try {
+//     const userId = req.query.userId; // Retrieve the user ID from the session
 
+//     // Check if the user is logged in
+//     if (!userId) {
+//       return res.render('items/item_lists', { items: [], total: 0, showSidebar: false });
+//     }
 
+//     // Find the order for the user (since there's no 'status' column, we won't filter by status)
+//     const order = await Order.findOne({
+//       where: { userId }, // Only filter by userId
+//       include: [
+//         {
+//           model: OrderCart,
+//           as: 'orderCarts',
+//           include: [
+//             {
+//               model: Product,
+//               as: 'product'
+//             }
+//           ]
+//         }
+//       ]
+//     });
 
+//     // If no order exists for the user, render an empty cart
+//     if (!order) {
+//       return res.render('items/cart', { items: [], total: 0, showSidebar: false });
+//     }
 
+//     // Calculate the total from the cart items
+//     const total = order.orderCarts.reduce((acc, item) => acc + item.amount, 0);
 
-
-
-
-
-
-
-
+//     // Render the cart page with the order items and the total
+//     res.render('items/cart', { items: order.orderCarts, total, showSidebar: false });
+//   } catch (error) {
+//     console.error('Error fetching cart:', error);
+//     res.status(500).send('Server error');
+//   }
+// };
 
 exports.getCart = async (req, res, next) => {
   try {
-    const userId = req.query.userId; // Retrieve the user ID from the session
+    const userId = req.user.id;
 
-    // Check if the user is logged in
     if (!userId) {
-      return res.render('items/item_lists', { items: [], total: 0, showSidebar: false });
+      return res.render('items/cart', { items: [], total: 0, showSidebar: false });
     }
 
-    // Find the order for the user (since there's no 'status' column, we won't filter by status)
-    const order = await Order.findOne({
-      where: { userId }, // Only filter by userId
+    const cart = await Cart.findOne({
+      where: { userId },
       include: [
         {
-          model: OrderCart,
-          as: 'orderCarts',
+          model: CartItem,
+          as: 'cartItems', // Ensure the alias matches the one defined in the association
           include: [
             {
               model: Product,
-              as: 'product'
+              as: 'product' // Ensure the alias for Product is correct as well
             }
           ]
         }
       ]
     });
 
-    // If no order exists for the user, render an empty cart
-    if (!order) {
+    if (!cart) {
       return res.render('items/cart', { items: [], total: 0, showSidebar: false });
     }
 
-    // Calculate the total from the cart items
-    const total = order.orderCarts.reduce((acc, item) => acc + item.amount, 0);
+    const total = cart.cartItems.reduce((acc, item) => acc + item.amount, 0);
 
-    // Render the cart page with the order items and the total
-    res.render('items/cart', { items: order.orderCarts, total, showSidebar: false });
+    res.render('items/cart', { items: cart.cartItems, total, showSidebar: false });
   } catch (error) {
     console.error('Error fetching cart:', error);
     res.status(500).send('Server error');
   }
 };
+
+
 
   
 
