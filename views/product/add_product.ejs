@@ -16,12 +16,12 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="productName" class="form-label">Product Name</label>
-                                        <input type="text" id="productName" name="productName" class="form-control" placeholder="Item Name">
+                                        <input type="text" id="productName" name="productName" class="form-control" placeholder="Item Name" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="productCategories" class="form-label">Product Categories</label>
-                                    <select name="productCategories" id="productCategories" class="form-control">
+                                    <select name="productCategories" id="productCategories" class="form-control" required data-choices data-choices-groups data-placeholder="Select Category">
                                         <option value="">Select Category</option>
                                         <option value="Jersey">Jersey</option>
                                         <option value="Clothes">Clothes</option>
@@ -32,13 +32,13 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="productBrand" class="form-label">Brand</label>
-                                        <input type="text" id="productBrand" name="productBrand" class="form-control" placeholder="Brand Name">
+                                        <input type="text" id="productBrand" name="productBrand" class="form-control" required placeholder="Brand Name">
                                     </div>
                                 </div>
                 
                                 <div class="col-lg-6">
                                     <label for="gender" class="form-label">Gender</label>
-                                    <select class="form-control" id="gender" name="gender" data-choices data-choices-groups data-placeholder="Select Gender">
+                                    <select class="form-control" id="gender" name="gender" required data-choices data-choices-groups data-placeholder="Select Gender">
                                         <option value="">Select Gender</option>
                                         <option value="Men">Men</option>
                                         <option value="Women">Women</option>
@@ -50,7 +50,7 @@
                                 <div class="col-lg-4">
                                     <div class="mt-3">
                                         <h5 class="text-dark fw-medium">Size :</h5>
-                                        <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                        <div class="d-flex flex-wrap gap-2" role="group" required aria-label="Basic checkbox toggle button group">
                                             <input type="checkbox" class="btn-check" id="size-xs1" name="size" value="XS">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xs1">XS</label>
 
@@ -71,7 +71,7 @@
                                 <div class="col-lg-4">
                                     <div class="mt-3">
                                         <h5 class="text-dark fw-medium">Colors :</h5>
-                                        <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                        <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group" required>
                                             <input type="checkbox" class="btn-check" id="color-dark1" name="color" value="Dark">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark1"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
 
@@ -101,13 +101,13 @@
                                     <div class="col-lg-12">
                                          <div class="mb-3">
                                               <label for="description" class="form-label">Description</label>
-                                              <textarea class="form-control bg-light-subtle" id="description" name="description" rows="7" placeholder="Short description about the product"></textarea>
+                                              <textarea class="form-control bg-light-subtle" id="description" name="description" rows="7" required placeholder="Short description about the product"></textarea>
                                          </div>
                                     </div>
                                </div>
 
                                <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <!-- Tag Number Input -->
                                     <div class="mb-3">
                                         <label for="tagNumber" class="form-label">Tag Number</label>
@@ -115,27 +115,35 @@
                                     </div>
                                 </div>
                             
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <!-- Stock Input -->
                                     <div class="mb-3">
                                         <label for="quantity" class="form-label">Stock</label>
-                                        <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Quantity">
+                                        <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Quantity" required>
                                     </div>
                                 </div>
                             
-                                
-                            </div>
-
-                            <div class="row">
                                 <div class="col-lg-4">
                                     <!-- Price Input -->
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price</label>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text fs-20"><i class='bx bx-dollar'></i></span>
-                                            <input type="number" id="price" name="price" class="form-control" placeholder="000">
+                                            <input type="number" id="price" name="price" class="form-control" required placeholder="000">
                                         </div>
                                     </div>
+                                </div>
+                                
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <label for="discountType" class="form-label">Select Discount Type</label>
+                                    <select class="form-control" id="discountType" required name="discountType" data-choices data-choices-groups data-placeholder="Select Discount Type">
+                                        <option value="">Discount Type</option>
+                                        <option value="Percentage">Percentage</option>
+                                        <option value="Fixed">Fixed Amount</option>
+                                    </select>
                                 </div>
                                 
                                 <div class="col-lg-4">

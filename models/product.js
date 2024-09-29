@@ -90,6 +90,21 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: 0
     },
+    sellingPrice: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    },
+    discountType: {
+      type: DataTypes.ENUM('Percentage', 'Fixed'), 
+      allowNull: true,
+    },
+    isDiscount: {
+      type: DataTypes.BOOLEAN,  // This will create a TINYINT(1) column in MySQL
+      allowNull: true,
+      defaultValue: false,      // Set a default value of false
+    }
+
   }, {
     sequelize,
     tableName: 'products',

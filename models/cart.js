@@ -72,7 +72,16 @@ module.exports = (sequelize, DataTypes) => {
     payment_method: {
       type: DataTypes.STRING,
       allowNull: true,
-    }
+    },
+    orderDate: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW, // Automatically sets the date when an order is created
+    },
+    status: {
+      type:DataTypes.ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'),
+      allowNull: false,
+      defaultValue: 'Pending', // Default status
+    },
   }, {
     sequelize,
     tableName: 'carts',

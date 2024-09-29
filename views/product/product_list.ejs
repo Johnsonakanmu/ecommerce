@@ -59,18 +59,17 @@
                                                 </td>
                                                 <td>$<%= row.price %></td>
                                                 <td>
-                                                  <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity %> Item(s)</span> Left</p>
-                                                  <p class="mb-0 text-muted"><%= row.soldAmount %> Sold</p>
+                                                  <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity - (row.soldAmount || 0) %> Item(s)</span> Left</p>
+                                                  <p class="mb-0 text-muted"><%= row.soldAmount || 0 %> Sold</p>
                                                   <!-- Hidden form to update sold amount -->
                                                   <form id="updateSoldForm<%= row.id %>" action="/updateSoldAmount/<%= row.id %>" method="POST" style="display: none;">
                                                     <input type="number" name="soldAmount" value="1" min="1"> <!-- Default value; adjust as needed -->
                                                     <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
                                                   </form>
-                                                  <!-- Button to trigger form submission -->
-                                                  <a href="#" onclick="document.getElementById('updateSoldForm<%= row.id %>').submit();" class="btn btn-soft-primary btn-sm">
+                                                  <!-- <a href="#" onclick="document.getElementById('updateSoldForm<%= row.id %>').submit();" class="btn btn-soft-primary btn-sm">
                                                     Update Sold Amount
                                                   </a>
-                                                </td>
+                                                </td> -->
         
                                                 <td>
                                                     <span class="badge p-1 bg-light text-dark fs-12 me-1">

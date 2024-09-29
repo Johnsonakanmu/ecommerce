@@ -6,7 +6,9 @@
         <div class="container-xxl">
     
              <div class="row">
-                  <div class="col-lg-8">
+               <div class="col-lg-8">
+                   <form action="/order_checkout" method="post">
+
                        <div class="card">
                             <div class="card-body">
                                  <div class="row">
@@ -16,36 +18,36 @@
                                       <div class="col-lg-9">
                                            <div class="row">
                                                 <div class="col-lg-6">
-                                                     <form>
+                                                     
                                                           <div class="mb-3">
                                                                <label for="first-name" class="form-label">First Name</label>
-                                                               <input type="text" id="first-name" class="form-control" placeholder="First name">
+                                                               <input type="text" id="first-name" name="firstname" class="form-control" placeholder="First name">
                                                           </div>
-                                                     </form>
+                                                     
                                                 </div>
                                                 <div class="col-lg-6">
-                                                     <form>
+                                                     
                                                           <div class="mb-3">
                                                                <label for="last-name" class="form-label">Last Name</label>
-                                                               <input type="text" id="last-name" class="form-control" placeholder="Last name">
+                                                               <input type="text" id="last-name" name="lastname" class="form-control" placeholder="Last name">
                                                           </div>
-                                                     </form>
+                                                     
                                                 </div>
                                                 <div class="col-lg-6">
-                                                     <form>
+                                                     
                                                           <div class="mb-3">
                                                                <label for="your-email" class="form-label">Your Email</label>
-                                                               <input type="email" id="your-email" class="form-control" placeholder="Email">
+                                                               <input type="email" name="email" id="your-email" class="form-control" placeholder="Email">
                                                           </div>
-                                                     </form>
+                                                     
                                                 </div>
                                                 <div class="col-lg-6">
-                                                     <form>
+                                                     
                                                           <div class="mb-3">
                                                                <label for="your-number" class="form-label">Phone number</label>
-                                                               <input type="number" id="your-number" name="your-number" class="form-control" placeholder="Number">
+                                                               <input type="number" id="your-number" name="your-number" name="phone" class="form-control" placeholder="Number">
                                                           </div>
-                                                     </form>
+                                                    
                                                 </div>
                                            </div>
                                       </div>
@@ -59,26 +61,26 @@
                                                 <div class="row">
                                                      <div class="col-lg-12">
                                                           <h5 class="mb-4">Shipping Address :</h5>
-                                                          <form>
+                                                          
                                                                <div class="mb-3">
                                                                     <label for="your-address" class="form-label">Full Address</label>
-                                                                    <textarea class="form-control" id="your-address" rows="3" placeholder="Enter address"></textarea>
+                                                                    <textarea class="form-control" name="address" id="your-address" rows="3" placeholder="Enter address"></textarea>
                                                                </div>
-                                                          </form>
+                                                          
                                                      </div>
                                                      <div class="col-lg-4">
-                                                          <form>
+                                                          
                                                                <div class="mb-3">
                                                                     <label for="your-zipcode" class="form-label">Zip-Code</label>
-                                                                    <input type="number" id="your-zipcode" class="form-control" placeholder="zip-code">
+                                                                    <input type="number" name="postal_code" id="your-zipcode" class="form-control" placeholder="zip-code">
                                                                </div>
-                                                          </form>
+                                                          
                                                      </div>
     
                                                      <div class="col-lg-4">
-                                                          <form>
+                                                         
                                                                <label for="choices-city" class="form-label">City</label>
-                                                               <select class="form-control" id="choices-city" data-choices data-choices-groups data-placeholder="Select City" name="choices-city">
+                                                               <select class="form-control" name="city" id="choices-city" data-choices data-choices-groups data-placeholder="Select City" name="choices-city">
                                                                     <option value="">Choose a city</option>
                                                                     <optgroup label="UK">
                                                                          <option value="London">London</option>
@@ -113,12 +115,12 @@
                                                                          <option value="Vancouver">Vancouver</option>
                                                                     </optgroup>
                                                                </select>
-                                                          </form>
+                                                         
                                                      </div>
                                                      <div class="col-lg-4">
-                                                          <form>
+                                                         
                                                                <label for="choices-country" class="form-label">Country</label>
-                                                               <select class="form-control" id="choices-country" data-choices data-choices-groups data-placeholder="Select Country" name="choices-country">
+                                                               <select class="form-control" name="country" id="choices-country" data-choices data-choices-groups data-placeholder="Select Country" name="choices-country">
                                                                     <option value="">Choose a country</option>
                                                                     <optgroup label="">
                                                                          <option value="">United Kingdom</option>
@@ -134,7 +136,7 @@
                                                                          <option value="United Arab Emirates">United Arab Emirates</option>
                                                                     </optgroup>
                                                                </select>
-                                                          </form>
+                                                          
                                                      </div>
                                                 </div>
                                                 <div class="mt-2">
@@ -163,7 +165,7 @@
                                                                          </div>
                                                                          <div class="ms-auto">
                                                                               <p class="mb-2">$10.00</p>
-                                                                              <input class="form-check-input float-end" type="radio" name="shipping" id="shipping-1">
+                                                                              <input class="form-check-input float-end" type="radio" name="shipping_method" id="shipping-1">
                                                                          </div>
                                                                     </div>
                                                                </label>
@@ -190,7 +192,7 @@
                                                                          </div>
                                                                          <div class="ms-auto">
                                                                               <p class="mb-2">$10.00</p>
-                                                                              <input class="form-check-input float-end" type="radio" name="shipping" id="shipping-2">
+                                                                              <input class="form-check-input float-end" type="radio" name="shipping_method" id="shipping-2">
                                                                          </div>
                                                                     </div>
                                                                </label>
@@ -217,7 +219,7 @@
                                                                          </div>
                                                                          <div class="ms-auto">
                                                                               <p class="mb-2">$8.00</p>
-                                                                              <input class="form-check-input float-end" type="radio" name="shipping" id="shipping-3">
+                                                                              <input class="form-check-input float-end" type="radio" name="shipping_method" id="shipping-3">
                                                                          </div>
                                                                     </div>
                                                                </label>
@@ -244,7 +246,7 @@
                                                                          </div>
                                                                          <div class="ms-auto">
                                                                               <p class="mb-2">$0.00</p>
-                                                                              <input class="form-check-input float-end" type="radio" name="shipping" id="shipping-4" checked>
+                                                                              <input class="form-check-input float-end" type="radio" name="shipping_method" id="shipping-4" checked>
                                                                          </div>
                                                                     </div>
                                                                </label>
@@ -254,7 +256,7 @@
                                            </div>
                                       </div>
                                  </div>
-                                 <div class="mt-5">
+                                 <!-- <div class="mt-5">
                                       <div class="row">
                                            <div class="col-lg-3">
                                                 <h4 class="card-title">Payment Method</h4>
@@ -279,7 +281,7 @@
                                                                </div>
                                                                <div id="collapseTwo" class="collapse" aria-labelledby="pay-pal" data-bs-parent="#accordionExample">
                                                                     <div class="card-body">
-                                                                         <input type="text" class="form-control" placeholder="Paypal email">
+                                                                         <input type="text" class="form-control" name="payment_method" placeholder="Paypal email">
                                                                     </div>
                                                                </div>
                                                           </div>
@@ -305,12 +307,12 @@
                                                                </div>
                                                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                                     <div class="p-3">
-                                                                         <form>
+                                                                         
                                                                               <div class="mb-3">
                                                                                    <label for="card-number" class="form-label">Card Number</label>
-                                                                                   <input type="number" id="card-number" name="card-number" class="form-control" placeholder="0000 0000 0000 0000" max="16" maxlength="16" required>
+                                                                                   <input type="number" id="card-number" name="cardnumber" class="form-control" placeholder="0000 0000 0000 0000" max="16" maxlength="16" required>
                                                                               </div>
-                                                                         </form>
+                                                                         
                                                                          <div class="row">
                                                                               <div class="col-md-6">
                                                                                    <div class="mb-3">
@@ -336,9 +338,11 @@
                                                 </div>
                                            </div>
                                       </div>
-                                 </div>
+                                 </div> -->
                             </div>
+                        
                        </div>
+                    </form>
                   </div>
                   <div class="col-lg-4">
                        <div class="card text-center bg-primary overflow-hidden z-1">
@@ -481,10 +485,16 @@
                                                      <td class="text-end text-dark fw-medium px-0">$00.00</td>
                                                 </tr>
                                                 <tr>
+                                                  <td class="px-0">
+                                                       <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon> Status : </p>
+                                                  </td>
+                                                  <td class="text-end text-dark fw-medium px-0">Pending</td>
+                                             </tr>
+                                                <tr>
                                                      <td class="px-0">
-                                                          <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:calculator-minimalistic-broken" class="align-middle"></iconify-icon> Estimated Tax (15.5%) : </p>
+                                                          <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:calculator-minimalistic-broken" class="align-middle"></iconify-icon> Order Date : </p>
                                                      </td>
-                                                     <td class="text-end text-dark fw-medium px-0">$20.00</td>
+                                                     <td class="text-end text-dark fw-medium px-0">2024-10-03</td>
                                                 </tr>
     
                                            </tbody>

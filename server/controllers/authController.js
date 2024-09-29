@@ -12,6 +12,34 @@ exports.loginPage = (req, res, next)=>{
 }
 
 
+
+
+exports.loginPages = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ where: { email } });
+
+    if (user && user.password === password) {
+      // Assuming a plain text password for demo; consider using bcrypt for hashing
+      res.redirect('product/index'); // Redirect to the dashboard on successful login
+    } else {
+      // Render the login page again with an error message
+      res.render('product/index', { 
+        title: "Login Page | Order Your Jersey",  
+        showSidebar: true, 
+        error: 'Invalid email or password' 
+      });
+    }
+  } catch (err) {
+    console.error("Error during login:", err); // Log the error for better debugging
+    res.status(500).send('Internal server error');
+  }
+};
+
+
+
 exports.signupPage = async (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
 

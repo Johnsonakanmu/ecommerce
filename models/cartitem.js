@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate({Cart, Product}) {
       // define association here
       this.belongsTo(Cart, { foreignKey: 'cartId', as: 'cart' });
-      this.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+      this.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'CASCADE' });
     }
   }
   CartItem.init({
@@ -58,7 +58,16 @@ module.exports = (sequelize, DataTypes) => {
     amount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
-    },  
+    }, 
+    tax: {
+      type: DataTypes.INTEGER,
+      allowNull: true, 
+      defaultValue: 0,
+    } ,
+    discount: {
+      type: DataTypes.FLOAT, // Add this field to store discount value
+      allowNull: true, // If there's no discount, this can be null
+    },
   }, {
     sequelize,
     tableName: 'cartItems',

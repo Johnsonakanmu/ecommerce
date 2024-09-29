@@ -48,7 +48,7 @@ app.use((req, res, next) => {
   });
 
   app.use((req, res, next) => {
-    User.findByPk(1).then((user) => {
+    User.findByPk(4).then((user) => {
       req.user = user;
       next();
     }).catch(err => {

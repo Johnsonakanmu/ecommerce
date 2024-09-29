@@ -221,7 +221,6 @@
                                    <img src="<%= product.imageUrl %>" width="200" alt="" class="img-fluid ">
                                    <div class="card-body bg-light-subtle rounded-bottom">
                                         <a href="/product_detail/<%= product.id %>" class="text-dark fw-medium fs-16"><%= product.productName %></a>
-                                        <div>Category: <%= product.category ? product.category.productName : 'N/A' %> </div>
 
 
                                         <div class="my-1">
@@ -239,9 +238,15 @@
                                                   <p class="mb-0 fw-medium fs-15 text-dark"><%= rating.toFixed(1) %> <span class="text-muted fs-13">(<%= product.reviews || 0 %> Reviews)</span></p>
                                               </div>
                                         </div>
-                                        <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
-                                             <span class="text-muted text-decoration-line-through">$<%= product.price || 0 %></span> $<%= product.discount || 0 %> <small class="text-muted"> (<%= product.tax || 0 %> Off)</small>
-                                        </h4>
+                                        <% if (product.sellingPrice && product.discount) { %>
+                                             <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
+                                                 <span class="text-muted text-decoration-line-through">$<%= product.price || 0 %></span> $<%= product.sellingPrice %> <small class="text-muted"> (<%= product.discount %> Off)</small>
+                                             </h4>
+                                         <% } else { %>
+                                             <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
+                                                 $<%= product.price || 0 %>
+                                             </h4>
+                                         <% } %>
                                         <form action="/cart/<%= product.id %>" method="POST" class="d-flex gap-2">
                                              <input type="hidden" name="productId" value="<%= product.id %>" />
                                              <button type="submit" class="btn btn-outline-dark border border-secondary-subtle d-flex align-items-center justify-content-center gap-1 w-100">

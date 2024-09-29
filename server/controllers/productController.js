@@ -1,4 +1,4 @@
-const { Product, Category, User } = require("../../models/index");
+const { Product, CartItem, Order } = require("../../models/index");
 const fs = require("fs");
 
 
@@ -42,7 +42,7 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-
+// For pagination
 exports.listView = async (req, res, next) => {
   try {
     // Parse page and limit from query parameters, with default values
@@ -77,9 +77,6 @@ exports.listView = async (req, res, next) => {
   }
 };
 
-
-
-
 exports.addProducts = (req, res, next) => {
   res.render("product/add_product", {
     title: "Product List | Order Your Jersey",
@@ -87,40 +84,59 @@ exports.addProducts = (req, res, next) => {
   });
 };
 
-
-
 exports.addProduct = async (req, res, next) => {
   const {
     productName, productCategories, productBrand, description, gender, color,
-    size, tagNumber, quantity, tag, price, discount, tax
+    size, tagNumber, quantity, tag, price, discount, tax, discountType,
+    isDiscount 
   } = req.body;
 
   try {
     // Fetch the user manually by ID (assuming you are using a static user ID for now)
-    const userId = 1; // Replace with the correct ID of the manually created user
-    const user = await User.findByPk(userId);
+    const user = req.user; // Access the authenticated user
 
     if (!user) {
       throw new Error("User not found.");
     }
-
-    // Calculate the discounted price
-    const discountedPrice = price - (discount || 0); // Ensure discount is applied correctly
-
-    // Calculate the final price including tax
-    const finalPrice = discountedPrice + (tax || 0); // Ensure tax is applied correctly
 
     // Check if the file was uploaded
     if (!req.file) {
       throw new Error("Product image is required.");
     }
 
+    // Convert price and discount to numbers
+    const priceValue = parseFloat(price);
+    const discountValue = parseFloat(discount);
+    
+
+    // Calculate the discounted price
+    let sellingPrice = priceValue;
+    let isDiscount = false;
+
+    // Check if discount type and values are valid
+    if (discountType === "Percentage") {
+      // Calculate discount as a percentage
+      isDiscount = true;
+      sellingPrice = priceValue - (priceValue * discountValue / 100);
+    } else if (discountType === "Fixed") {
+      // Apply a fixed discount amount
+      isDiscount = true;
+      sellingPrice = priceValue - discountValue;
+    } else {
+      console.log("Missing or invalid discount details. Skipping discount calculation.");
+    }
+    
+   
+    // Calculate the final price including tax
+    const finalPrice = sellingPrice;
+    
+
     // Create a product object
     const product = {
       productName, productCategories, productBrand, description, gender, color, size,
-      tagNumber, quantity, tag, price, discount, tax,
+      tagNumber, quantity, tag, price: priceValue, discount: discountValue, tax,
       imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
-      finalPrice,
+       sellingPrice:finalPrice, discountType, isDiscount
     };
 
     // Create the product for the manually fetched user
@@ -132,7 +148,7 @@ exports.addProduct = async (req, res, next) => {
       type: "success",
       message: "Product added successfully",
     };
-    res.redirect("/");
+    res.redirect("/items");
   } catch (err) {
     // Log the error and send a JSON response or redirect to an error page
     console.error("Error adding product:", err);
@@ -142,14 +158,9 @@ exports.addProduct = async (req, res, next) => {
       message: err.message,
     };
 
-    res.redirect("/error"); // Redirect to an error page or similar
+    res.redirect("/"); // Redirect to an error page or similar
   }
 };
-
-
-
-
-
 
 exports.getEditProductPage = async (req, res, next) => {
   try {
@@ -185,136 +196,154 @@ exports.getEditProductPage = async (req, res, next) => {
 };
 
 
-
-exports.updateProduct = async (req, res) => {
+exports.updateProduct = async (req, res, next) => {
   const id = req.params.id;
-
   const {
-    productName, productBrand, description, gender,tagNumber,
-    quantity, price, discount,tax, imageUrl, productCategories
+   
+    productName, productCategories, productBrand, description, gender, color,
+    size, tagNumber, quantity, tag, price, discount, tax, discountType
   } = req.body;
 
-  let new_image = "";
-
-  // Handle image upload and delete old image if necessary
-  if (req.file) {
-    new_image = req.file.filename;
-    try {
-      if (req.body.old_image) {
-        fs.unlinkSync("./uploads/" + req.body.old_image);
-      }
-    } catch (error) {
-      console.error("Error deleting old image:", error);
-    }
-  } else {
-    new_image = req.body.old_image;
-  }
-
   try {
-    // Find the product by ID
-    const products = await Product.findOne({ where: { id } });
+    
+   // Find the product by ID
+   const product = await Product.findOne({ where: { id } });
 
-    if (!products) {
-      // Check if product is not found
-      req.session.message = {
-        type: "danger",
-        message: "Product not found",
-      };
-      return res.redirect("/");
+   if (!product) {
+     // Check if product is not found
+     req.session.message = {
+       type: "danger",
+       message: "Product not found",
+     };
+     return res.redirect("/items");
+   }
+
+    // Check if the file was uploaded and update the image if present
+    let imageUrl = product.imageUrl;
+    if (req.file) {
+      imageUrl = req.file.filename; // Use the new uploaded file's filename
     }
 
-    // Calculate the discounted price and final price including tax
-    const discountedPrice = quantity - discount;
-    const finalPrice = discountedPrice + tax;
+    // Convert price and discount to numbers
+    const priceValue = parseFloat(price);
+    const discountValue = parseFloat(discount);
 
-    // Update the product properties
-    products.productName = productName;
-    products.productBrand = productBrand;
-    products.gender = gender;
-    products.image = new_image; // Corrected from `products.image: new_image`
-    products.description = description;
-    products.tagNumber = tagNumber;
-    products.quantity = quantity;
-    products.price = price;
-    products.discount = discount;
-    products.tax = tax;
-    products.discountedPrice = discountedPrice; 
-    products.finalPrice = finalPrice; 
-    products.productCategories = productCategories; 
+    // Calculate the discounted price
+    let sellingPrice = priceValue;
+    let isDiscount = false;
 
+    // Check if discount type and values are valid
+    if (discountType === "Percentage") {
+      // Calculate discount as a percentage
+      isDiscount = true;
+      sellingPrice = priceValue - (priceValue * discountValue / 100);
+    } else if (discountType === "Fixed") {
+      // Apply a fixed discount amount
+      isDiscount = true;
+      sellingPrice = priceValue - discountValue;
+    } else {
+      console.log("Missing or invalid discount details. Skipping discount calculation.");
+    }
+
+    // Calculate the final price including tax
+    const finalPrice = sellingPrice;
     
-    finalPrice
+    // Update the product object with new data
+    product.productName = productName;
+    product.productCategories = productCategories;
+    product.productBrand = productBrand;
+    product.description = description;
+    product.gender = gender;
+    // product.color = color;
+    // product.size = size;
+    product.tagNumber = tagNumber;
+    product.quantity = quantity;
+    product.tag = tag;
+    product.price = priceValue;
+    product.discount = discountValue;
+    product.tax = tax;
+    product.imageUrl = imageUrl;
+    product.sellingPrice = finalPrice;
+    product.discountType = discountType;
+    product.isDiscount = isDiscount;
 
-    // Save the updated product
-    await products.save();
+    // Save the updated product to the database
+    await product.save();
 
-    // Redirect or render the page after successful update
+    // Set success message and redirect
     req.session.message = {
+      data: product,
       type: "success",
-      products: products,
       message: "Product updated successfully",
     };
-    res.redirect("/"); // Redirect to home or the desired page
-  } catch (error) {
-    console.error("Error updating product:", error);
+    res.redirect("/");
+  } catch (err) {
+    // Log the error and send a JSON response or redirect to an error page
+    console.error("Error updating product:", err);
+
     req.session.message = {
       type: "danger",
-      message: "Error updating product",
+      message: err.message,
     };
-    res.redirect("/");
+
+    res.redirect("/error"); // Redirect to an error page or similar
   }
 };
 
-
-
 exports.deleteProduct = async (req, res, next) => {
     const id = req.params.id;
-  
+
     try {
-      // Find the product by ID
-      const product = await Product.findOne({ where: { id } });
-  
-      if (!product) {
-        req.session.message = {
-          type: 'danger',
-          message: 'Product not found'
-        };
-        return res.redirect('/');
-      }
-  
-      // Check if product has an image and delete it
-      if (product.image) {
-        try {
-          fs.unlinkSync("./uploads/" + product.image);
-        } catch (error) {
-          console.error('Error deleting image:', error);
-          req.session.message = {
-            type: 'danger',
-            message: 'Error deleting product image'
-          };
-          return res.redirect('/');
+        // Find the product by ID
+        const product = await Product.findOne({ where: { id } });
+
+        if (!product) {
+            req.session.message = {
+                type: 'danger',
+                message: 'Product not found'
+            };
+            return res.redirect('/');
         }
-      }
-  
-      // Delete the product
-      await product.destroy();
-  
-      req.session.message = {
-        type: 'info',
-        message: 'Product deleted successfully'
-      };
-      res.redirect('/');
+
+        // Delete related cart items
+        await CartItem.destroy({ where: { productId: id } }); // Adjust model name and field as necessary
+
+        // Check if product has an image and delete it
+        if (product.image) {
+            const imagePath = `./uploads/${product.image}`;
+            try {
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                } else {
+                    console.warn(`Image not found at path: ${imagePath}`);
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+                req.session.message = {
+                    type: 'danger',
+                    message: 'Error deleting product image'
+                };
+                return res.redirect('/');
+            }
+        }
+
+        // Delete the product
+        await product.destroy();
+
+        req.session.message = {
+            type: 'info',
+            message: 'Product deleted successfully'
+        };
+        res.redirect('/');
     } catch (err) {
-      console.error('Error deleting product:', err);
-      req.session.message = {
-        type: 'danger',
-        message: 'Error deleting product'
-      };
-      res.redirect('/');
+        console.error('Error deleting product:', err);
+        req.session.message = {
+            type: 'danger',
+            message: 'Error deleting product: ' + err.message // Provide more detail in the error message
+        };
+        res.redirect('/');
     }
-  };
-
-
+};
 
 // Controller function to handle product detail
 exports.productDetail = async (req, res, next) => {
@@ -336,9 +365,7 @@ exports.productDetail = async (req, res, next) => {
   }
 };
 
-
-
- exports.updateProductSoldAmount = async (req, res) => {
+exports.updateProductSoldAmount = async (req, res) => {
   const { id } = req.params; // Product ID from URL
   const { soldAmount } = req.body; // Amount to add to soldAmount
 
@@ -354,31 +381,49 @@ exports.productDetail = async (req, res, next) => {
       return res.redirect("/"); // Redirect or handle error
     }
 
-    // Update sold amount and calculate unsold amount
-    product.soldAmount = (product.soldAmount || 0) + soldAmount;
+    // Convert soldAmount to a number to ensure correct arithmetic
+    const soldAmountValue = parseInt(soldAmount, 10);
     
-    if (product.soldAmount > product.productStock) {
+    // Ensure soldAmount is a valid number
+    if (isNaN(soldAmountValue) || soldAmountValue <= 0) {
+      req.session.message = {
+        type: "danger",
+        message: "Invalid sold amount",
+      };
+      return res.redirect("/"); // Redirect or handle error
+    }
+
+    // Check if the sold amount exceeds available stock
+    if ((product.soldAmount || 0) + soldAmountValue > product.productStock) {
       req.session.message = {
         type: "danger",
         message: "Sold amount exceeds available stock",
       };
-      return res.redirect("/"); // Redirect or handle error
+      return res.redirect("product/product_detail"); // Redirect or handle error
     }
+
+    // Update sold amount and save the updated product
+    product.soldAmount = (product.soldAmount || 0) + soldAmountValue;
 
     // Save the updated product
     await product.save();
 
     // Redirect to product list or success page
-    res.redirect("/"); // Redirect to the products page or wherever appropriate
+    req.session.message = {
+      type: "success",
+      message: "Sold amount updated successfully",
+    };
+    res.redirect("/product_detail"); // Redirect to the products page or wherever appropriate
   } catch (err) {
     console.error('Error updating product sold amount:', err);
     req.session.message = {
       type: 'danger',
       message: 'Error updating product sold amount',
     };
-    res.redirect('/'); // Redirect or handle error
+    res.redirect('/product_detail'); // Redirect or handle error
   }
 };
+
 
 
 
