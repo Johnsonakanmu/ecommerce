@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   Cart.init({
     userId: {
       type: DataTypes.INTEGER, // Should match the type of User's primary key
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'users',
         key: 'id'

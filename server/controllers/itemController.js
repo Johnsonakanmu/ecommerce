@@ -89,18 +89,15 @@ exports.searchItem = async (req, res) => {
 
 exports.postCart = async (req, res) => {
   const productId = req.params.productId;
-  const userId = req.user.id; // Get the userId from the session
-  const sessionId = req.session.id; // Get the session ID from the request
+  const userId = req.user?req.user.id:null; // Get the userId from the session
+  const sessionId = req.sessionID; // Get the session ID from the request
   const quantity = 1; // Default quantity to add
 
   try {
+    const whereCondition = userId  ? { userId: userId }  : { sessionId: sessionId }; 
+
     let cart = await Cart.findOne({
-      where: {
-        [Op.or]: [
-          { userId: userId },
-          { sessionId: sessionId },
-        ],
-      },
+      where: whereCondition,
     });
     
     if (!cart) {
@@ -171,8 +168,9 @@ exports.postCart = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { subtotal, totalDiscount, totalTax, items, } = await calculateCartTotals(userId);
+    const user_or_session_id = req.user?req.user.id:req.sessionID;
+    console.log("User or session Id: ",user_or_session_id)
+    const { subtotal, totalDiscount, totalTax, items, } = await calculateCartTotals(user_or_session_id);
 
     // Calculate the estimated delivery date
     const estimatedDeliveryDate = new Date();
@@ -319,6 +317,7 @@ exports.getAccount = async (req, res, next) => {
 
 
 exports.createAccount = async (req, res, next) => {
+  console.log(req.session)
   const { firstName, lastName, email, phone } = req.body;
 
   try {

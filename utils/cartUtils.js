@@ -1,23 +1,29 @@
 const { Cart, CartItem, Product } = require('../models'); // Adjust path based on your project structure
+const { Op } = require('sequelize');
 
-async function calculateCartTotals(userId) {
-    const cart = await Cart.findOne({
-      where: { userId },
-      include: [
-        {
-          model: CartItem,
-          as: 'cartItems',
-          attributes: ['id', 'quantity', 'price', 'discount', 'tax'],
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['id', 'productName', 'imageUrl', 'size', 'color'],
-            },
-          ],
-        },
-      ],
-    });
+async function calculateCartTotals(user_or_session_id) {
+  const cart = await Cart.findOne({
+    where: {
+      [Op.or]: [
+        { user_or_session_id },  
+        { user_or_session_id } 
+      ]
+    },
+    include: [
+      {
+        model: CartItem,
+        as: 'cartItems',
+        attributes: ['id', 'quantity', 'price', 'discount', 'tax'],
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['id', 'productName', 'imageUrl', 'size', 'color'],
+          },
+        ],
+      },
+    ],
+  });
   
     let totalDiscount = 0;
     let totalTax = 0;
