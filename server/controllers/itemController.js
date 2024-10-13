@@ -315,133 +315,39 @@ exports.getAccount = async (req, res, next) => {
 
 
 
-
 exports.createAccount = async (req, res, next) => {
   const { firstName, lastName, email, phone } = req.body;
 
   try {
-    // Check if the user already exists
+    // Check if user exists otherwise create new
     const existingUser = await User.findOne({ where: { email } });
-
-    if (existingUser) {
-      // Update the user's details
-      await existingUser.update({
-        firstName,
-        lastName,
-        phone,
-      });
-
-      req.session.message = {
-        type: 'success',
-        message: 'Account updated successfully',
-      };
-      return res.redirect('/shipping_details');
-    }
-
-    // Create a new user if not found
-    const newUser = await User.create({
-      firstName,
-      lastName,
-      email,
-      phone,
+    const currentUser = existingUser? existingUser: await User.create({firstName,lastName,email,phone,password});
+    await ShippingDetail.create({
+      userId: currentUser.id,
+      address,
+      state,
+      city,
+      postal_code,
+      country
     });
-
+    await Cart.updateUserIdBySessionId(sessionId, currentUser.id);
+   req.session.user= currentUser
+   req.session.userId= currentUser.id
     req.session.message = {
       type: 'success',
       message: 'Account created successfully',
     };
-    res.redirect('/shipping_details');
+    res.redirect('/checkout');
   } catch (err) {
     console.error("Error in account creation/updating:", err);
     req.session.message = {
       type: 'danger',
       message: err.message,
     };
-    res.redirect('/create_account');
+    res.redirect('/checkout');
   }
 };
 
-// exports.createAccount = async (req, res, next) => {
-//   const { firstName, lastName, email, phone, productId } = req.body; 
-//   const sessionId = req.session.id;
-
-//   try {
-//     // Check if session ID exists
-//     if (!sessionId) {
-//       req.session.message = {
-//         type: 'danger',
-//         message: 'Session ID not found. Please try again.',
-//       };
-//       console.log('Session ID not found');
-//       return res.redirect('/create_account');
-//     }
-
-//     // Validate input fields
-//     if (!firstName || !lastName || !email || !phone || !productId) {
-//       req.session.message = {
-//         type: 'danger',
-//         message: 'All fields are required.',
-//       };
-//       console.log('Input validation failed');
-//       return res.redirect('/create_account');
-//     }
-
-//     // Check for existing user
-//     const existingUser = await User.findOne({ where: { email } });
-//     const product = await Product.findByPk(productId);
-
-//     // Check if the product exists
-//     if (!product) {
-//       req.session.message = {
-//         type: 'danger',
-//         message: 'Product not found',
-//       };
-//       console.log('Product not found');
-//       return res.redirect('/create_account');
-//     }
-
-//     if (existingUser) {
-//       // Update user details
-//       await existingUser.update({ firstName, lastName, phone });
-//       await Order.update(
-//         { userId: existingUser.id },
-//         { where: { userId: null } }
-//       );
-//       await associateProductWithUser(existingUser.id, product.id);
-
-//       req.session.message = {
-//         type: 'success',
-//         message: 'Account updated successfully',
-//       };
-//       return res.redirect('/shipping_details');
-//     }
-
-//     // Create a new user if not found
-//     const newUser = await User.create({
-//       firstName,
-//       lastName,
-//       email,
-//       phone,
-//     });
-
-//     // Associate the new user with the product
-//     await associateProductWithUser(newUser.id, product.id);
-
-//     req.session.message = {
-//       type: 'success',
-//       message: 'Account created successfully',
-//     };
-//     return res.redirect('/shipping_details');
-
-//   } catch (err) {
-//     console.error("Error in account creation/updating:", err);
-//     req.session.message = {
-//       type: 'danger',
-//       message: 'An error occurred while processing your request. Please try again later.',
-//     };
-//     return res.redirect('/create_account');
-//   }
-// };
 
 
 
@@ -483,47 +389,6 @@ exports.getShippingDetails = async (req, res, next) => {
 }
 
 
-exports.createShippingDetails = async (req, res, next) => {
-  const { address, state, city, postal_code, country } = req.body;
-
-  if (!address || !city || !state || !postal_code || !country) {
-    return res.status(400).send('All shipping fields are required.');
-  }
-
-  try {
-    // Retrieve the currently logged-in user from the request
-    const user = req.user;
-
-    if (!user) {
-      req.session.message = { type: 'danger', message: 'User must be logged in to create a shipping address.' };
-      return res.redirect('/shipping_details');
-    }
-
-    // Create a new shipping address associated with the user
-    const newShippingDetails = await ShippingDetail.create({
-      userId: user.id, // Assuming user has been set in req.user
-      address,
-      state,
-      city,
-      postal_code,
-      country
-    });
-
-    req.session.message = {
-      type: 'success',
-      message: 'Shipping address successfully created.',
-    };
-    res.redirect('/checkout');
-  } catch (err) {
-    console.error('Error in creating shipping details:', err);
-    req.session.message = {
-      type: 'danger',
-      message: 'An error occurred while creating the shipping address. Please try again.',
-    };
-    res.redirect('/shipping_details');
-  }
-};
-
 
 exports.getOrder = async (req, res, next) => {
   const userId = req.session.userId;
@@ -558,7 +423,57 @@ exports.getOrder = async (req, res, next) => {
   }
 };
 
+exports.post('/verify-payment', async (req, res) => {
+  const { reference, totalAmount } = req.body;
 
+  try {
+    // Verify the transaction with Paystack
+    const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, // Your Paystack secret key
+      },
+    });
+
+    const paymentData = response.data;
+
+    // Check if the payment was successful
+    if (paymentData.data.status === 'success') {
+      // Payment verified, now create the order
+      await createOrder(req, res, totalAmount);
+    } else {
+      res.status(400).json({ status: 'failed', message: 'Payment verification failed' });
+    }
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({ status: 'error', message: 'Error during payment verification' });
+  }
+});
+
+exports.verifyPayment = async (req, res, next) => {
+  const { reference } = req.body;
+
+  try {
+    // Verify the transaction with Paystack
+    const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, // Your Paystack secret key
+      },
+    });
+
+    const paymentData = response.data;
+
+    // Check if the payment was successful
+    if (paymentData.data.status === 'success') {
+      // Payment verified, now create the order
+      await createOrder(req, res, next); // Call your existing createOrder function
+    } else {
+      res.status(400).json({ status: 'failed', message: 'Payment verification failed' });
+    }
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({ status: 'error', message: 'Error during payment verification' });
+  }
+};
 
 exports.createOrder = async (req, res, next) => {
   const userId = req.session.userId;
@@ -613,7 +528,7 @@ exports.createOrder = async (req, res, next) => {
     await cart.destroy();
 
     console.log('Order created:', order);
-
+    // You need to forward to payment success page
     res.render('items/checkout', {
       orderNo: orderNo,
       totalAmount: totalAmount.toFixed(2),
