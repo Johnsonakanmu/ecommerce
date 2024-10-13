@@ -25,6 +25,7 @@ app.use(express.static('public'));
 // app.use(morgan('combined'));
 app.use(expressLayouts);
 app.use(cors());
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_default_secret_key', // Use environment variable
   saveUninitialized: false, // Do not save uninitialized sessions
@@ -42,12 +43,6 @@ app.use((req, res, next)=>{
 });
 
 
-app.use((req, res, next) => {
-    if (!req.session.userId) {
-      req.session.userId = Date.now(); // Or any other unique value generation
-    }
-    next();
-  });
 
  
   app.use(async (req, res, next) => {
@@ -62,19 +57,7 @@ app.use((req, res, next) => {
         }
       }
   
-      // If no user in session or user not found, create a new user
-      const newUser = await User.create({
-        firstName: 'Guest',   // You can customize this part with default values or generate dynamically
-        lastName: 'User',
-        email: 'guest@example.com',
-      });
-  
-      // Save the new user to the session
-      req.session.userId = newUser.id;
-  
-      // Attach the new user to the request object
-      req.user = newUser;
-  
+     
       // Proceed to the next middleware
       next();
     } catch (err) {
