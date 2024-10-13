@@ -5,8 +5,8 @@ async function calculateCartTotals(user_or_session_id) {
   const cart = await Cart.findOne({
     where: {
       [Op.or]: [
-        { user_or_session_id },  
-        { user_or_session_id } 
+        { userId: user_or_session_id },  
+        { sessionId: user_or_session_id } 
       ]
     },
     include: [
@@ -25,6 +25,8 @@ async function calculateCartTotals(user_or_session_id) {
     ],
   });
   
+  
+
     let totalDiscount = 0;
     let totalTax = 0;
     let subtotal = 0; // Ensure this is a number

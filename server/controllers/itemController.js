@@ -95,7 +95,7 @@ exports.postCart = async (req, res) => {
 
   try {
     const whereCondition = userId  ? { userId: userId }  : { sessionId: sessionId }; 
-
+     console.log('my Session', sessionId)
     let cart = await Cart.findOne({
       where: whereCondition,
     });
@@ -282,10 +282,10 @@ exports.deleteCartItem = async (req, res, next) => {
 
 exports.getAccount = async (req, res, next) => {
   try {
-    const userId = req.session.userId;
+    const user_or_session_id = req.user?req.user.id:req.sessionID;
 
     // Get cart totals
-    const { subtotal, totalDiscount, totalTax } = await calculateCartTotals(userId);
+    const { subtotal, totalDiscount, totalTax } = await calculateCartTotals(user_or_session_id);
 
     // Estimated delivery date
     const estimatedDeliveryDate = 'October 10, 2024'; // Example date
@@ -317,7 +317,6 @@ exports.getAccount = async (req, res, next) => {
 
 
 exports.createAccount = async (req, res, next) => {
-  console.log(req.session)
   const { firstName, lastName, email, phone } = req.body;
 
   try {
@@ -456,10 +455,10 @@ exports.createAccount = async (req, res, next) => {
 
 exports.getShippingDetails = async (req, res, next) => {
   try {
-    const userId = req.session.userId;
+    const user_or_session_id = req.user?req.user.id:req.sessionID;
 
     // Get cart totals
-    const { subtotal, totalDiscount, totalTax,  } = await calculateCartTotals(userId);
+    const { subtotal, totalDiscount, totalTax,  } = await calculateCartTotals(user_or_session_id);
 
     // Calculate the total amount including delivery charge
     const total = parseFloat(subtotal) 
