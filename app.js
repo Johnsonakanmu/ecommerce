@@ -56,7 +56,9 @@ app.use((req, res, next)=>{
           return next();    // Proceed to the next middleware
         }
       }
-  
+      if (!req.session.visited) {
+        req.session.visited = true;  // Mark the session as initialized or modified
+      }
      
       if (!req.session.visited) {
         req.session.visited = true;  // Mark the session as initialized or modified
