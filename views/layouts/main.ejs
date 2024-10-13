@@ -127,7 +127,109 @@
         }
     }
 </script>
-  
+
+
+<script>
+  document.getElementById('checkout-form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    try {
+      // Send a POST request to the server to create the order
+      const response = await fetch('/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({}) // Pass any necessary data (if required)
+      });
+
+      // Handle the response
+      if (response.ok) {
+        // Order created successfully, redirect to the order view page
+        window.location.href = '/order';
+      } else {
+        const errorData = await response.text();
+        alert('Failed to create order: ' + errorData);
+      }
+    } catch (err) {
+      console.error('Error during order creation:', err);
+    }
+  });
+</script>
+
+
+<!-- <script>
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
+  event.preventDefault(); // Prevent default form submission
+
+  const email = document.getElementById("email").value; // Corrected to match the new ID
+  const password = document.getElementById("password").value; // Corrected to match the new ID
+
+  fetch('/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }), // Send email and password as JSON
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.accessToken) { // Check if accessToken is returned
+      localStorage.setItem("authToken", data.accessToken); // Store the JWT token
+      alert(data.message); // Display success message
+      window.location.href = "/dashboard"; // Redirect to dashboard
+    } else {
+      alert(data.message || "Login failed.");
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    alert("An error occurred. Please try again.");
+  });
+});
+
+</script>
+
+
+
+
+<script>
+  function submitForm(event) {
+  event.preventDefault(); // Prevent the default form submission behavior
+
+  const form = document.getElementById("productForm");
+  const formData = new FormData(form);
+
+  // Get the JWT token from localStorage or sessionStorage
+  const token = localStorage.getItem("authToken");
+  console.log("Token retrieved:", token); // Debugging: Check if the token is present
+
+  if (!token) {
+    alert("You are not authenticated. Please log in.");
+    return;
+  }
+
+  fetch('/add_product', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData, // FormData object will handle file uploads automatically
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message) {
+      alert(data.message);
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  });
+}
+
+</script> -->
+
+
 
 
 </body>

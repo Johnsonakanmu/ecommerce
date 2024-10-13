@@ -98,7 +98,7 @@
                       </div>
                       <% }); %>
                       <% } else { %>
-                        <p>Your cart is empty</p>
+                         <h1 class="text-center text-secondary mt-4">Your cart is empty</h1>
                       <% } %>
                  </div>
             </div>
@@ -181,20 +181,6 @@
                                                <td class="text-end text-dark fw-medium px-0">$<%= subtotal %></td>
                                           </tr>
                                           
-                                          
-                                          <tr>
-                                               <td class="px-0">
-                                                    <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon> Delivery Charge : </p>
-                                               </td>
-                                               <td class="text-end text-dark fw-medium px-0">$00.00</td>
-                                          </tr>
-                                          <!-- <tr>
-                                               <td class="px-0">
-                                                    <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:calculator-minimalistic-broken" class="align-middle"></iconify-icon> Estimated Tax (15.5%) : </p>
-                                               </td>
-                                               <td class="text-end text-dark fw-medium px-0">$<%= (total * 0.155).toFixed(2) %></td>
-                                          </tr> -->
-
                                      </tbody>
                                 </table>
                            </div>
@@ -223,8 +209,8 @@
                  </div>
 
                  <div class="main-btn my-4 text-end">
-                      <a href="/" class="btn btn-primary">Continue Shopping</a>
-                      <a href="order_checkout" class="btn btn-success">Buy Now</a>
+                      <a href="/items" class="btn btn-primary">Continue Shopping</a>
+                      <a href="create_account" class="btn btn-success">Checkout</a>
                  </div>
             </div>
        </div>

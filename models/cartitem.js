@@ -9,10 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({Cart, Product}) {
+    static associate({Cart, Product, User}) {
       // define association here
       this.belongsTo(Cart, { foreignKey: 'cartId', as: 'cart' });
       this.belongsTo(Product, { foreignKey: 'productId', as: 'product', onDelete: 'CASCADE' });
+      this.belongsTo(User, { foreignKey: 'userId', as: 'user', onDelete: 'CASCADE' });
     }
   }
   CartItem.init({
@@ -28,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'products',
         key: 'id',
+      },
+    },
+    userId: {
+      type: DataTypes.INTEGER, // Should match the type of User's primary key
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
       },
     },
     imageUrl: {

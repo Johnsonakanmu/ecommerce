@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('products', {
+    await queryInterface.createTable('products', 'createdBy', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -90,7 +90,14 @@ module.exports = {
         allowNull: true,
         defaultValue: true,      // Set a default value of false
       },
-      
+      createdBy: {
+        type: DataTypes.INTEGER, // or Sequelize.STRING depending on your user ID type
+        allowNull: false, // Ensures that createdBy cannot be null
+        references: {
+          model: 'Users', // name of the target model
+          key: 'id',      // key in the target model
+        }
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE
@@ -102,6 +109,6 @@ module.exports = {
     });
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable('products');
+    await queryInterface.dropTable('products', 'createdBy');
   }
 };

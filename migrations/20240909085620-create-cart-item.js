@@ -16,6 +16,14 @@ module.exports = {
           key: 'id',
         },
       },
+      userId: {
+        type: DataTypes.INTEGER, // Should match the type of User's primary key
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+      },
       productId: {
         type: DataTypes.INTEGER,
         references: {

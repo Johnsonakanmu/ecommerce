@@ -9,9 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({User, Cart, CartItem}) {
+    static associate({User, Cart, CartItem, OrderItem}) {
 
       this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+      this.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
+
+       this.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems' });
+
       // Product belongs to many carts through CartItem
       this.belongsToMany(Cart, {
         through: CartItem,   // Use CartItem as the join table
@@ -103,8 +107,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,  // This will create a TINYINT(1) column in MySQL
       allowNull: true,
       defaultValue: false,      // Set a default value of false
+    },
+    createdBy: {
+      type: DataTypes.INTEGER, // or Sequelize.STRING depending on your user ID type
+      allowNull: false, // Ensures that createdBy cannot be null
+      references: {
+        model: 'Users', // name of the target model
+        key: 'id',      // key in the target model
+      }
     }
-
   }, {
     sequelize,
     tableName: 'products',

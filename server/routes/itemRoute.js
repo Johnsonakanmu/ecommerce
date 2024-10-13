@@ -2,12 +2,20 @@ const router = require('express').Router();
 const itemController = require('../controllers/itemController')
 
 
-router.get('/items', itemController.itemsList);
+router.get('/', itemController.itemsList);
 router.get('/cart', itemController.getCart);
 router.post('/cart/:productId', itemController.postCart);
 
-router.get('/order_checkout', itemController.checkOut);
-router.post('/order_checkout', itemController.postOrder)
+router.get('/checkout', itemController.getOrder);
+router.post('/checkout', itemController.createOrder);
+
+
+router.get('/create_account', itemController.getAccount);
+router.post('/create_account', itemController.createAccount);
+
+router.get('/shipping_details', itemController.getShippingDetails);
+router.post('/shipping_details', itemController.createShippingDetails);
+
 
 router.get('/search', itemController.searchItem);
 

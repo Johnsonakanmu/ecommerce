@@ -1,5 +1,10 @@
-const {Product, Cart, CartItem, User, } = require('../../models/index');
+const {Product, Cart, CartItem, User, Order, OrderItem, ShippingDetail } = require('../../models/index');
 const { Sequelize } = require('sequelize'); 
+const { v4: uuidv4 } = require('uuid');  // For generating unique order numbers
+const { calculateCartTotals } = require('../../utils/cartUtils')
+const { Op } = require('sequelize'); // Make sure to import Op from Sequelize
+const { associateProductWithUser} = require('../../utils/productWithUser')
+
 
 exports.itemsList = async (req, res, next) => {
     try {
@@ -80,16 +85,27 @@ exports.searchItem = async (req, res) => {
 };
 
 
+
+
 exports.postCart = async (req, res) => {
   const productId = req.params.productId;
-  const userId = req.user.id;
+  const userId = req.user.id; // Get the userId from the session
+  const sessionId = req.session.id; // Get the session ID from the request
   const quantity = 1; // Default quantity to add
 
   try {
-    // Step 1: Find or Create the Cart for the Current User
-    let cart = await Cart.findOne({ where: { userId: userId } });
+    let cart = await Cart.findOne({
+      where: {
+        [Op.or]: [
+          { userId: userId },
+          { sessionId: sessionId },
+        ],
+      },
+    });
+    
     if (!cart) {
-      cart = await Cart.create({ userId: userId });
+      // Create a new cart with userId and sessionId
+      cart = await Cart.create({ userId: userId, sessionId: sessionId });
     }
 
     // Step 2: Fetch the Product from the Database
@@ -107,7 +123,12 @@ exports.postCart = async (req, res) => {
     const tax = product.tax || 0; // Ensure tax is defined, default to 0
 
     // Step 4: Check if Product Already Exists in the Cart
-    let cartItem = await CartItem.findOne({ where: { cartId: cart.id, productId: product.id } });
+    let cartItem = await CartItem.findOne({ where: { cartId: cart.id, productId: product.id },
+      include: [
+        { model: Product, as: 'product' },  // Use the correct alias from your association
+        { model: Cart, as: 'cart' }
+      ]
+     });
     if (cartItem) {
       // Update the existing item in the cart
       cartItem.quantity += quantity;
@@ -121,6 +142,7 @@ exports.postCart = async (req, res) => {
       cartItem = await CartItem.create({
         cartId: cart.id,
         productId: product.id,
+        userId,
         imageUrl: product.imageUrl,
         productName: product.productName,
         size: product.size,
@@ -145,6 +167,38 @@ exports.postCart = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
+
+exports.getCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { subtotal, totalDiscount, totalTax, items, } = await calculateCartTotals(userId);
+
+    // Calculate the estimated delivery date
+    const estimatedDeliveryDate = new Date();
+    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 5);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = estimatedDeliveryDate.toLocaleDateString('en-US', options);
+
+    // Calculate the final total price (Subtotal - Discount + Tax)
+    const total = subtotal;
+
+    // Render the view with items, subtotal, total price, total discount, and tax
+    res.render('items/cart', {
+      showSidebar: false,
+      items,
+      subtotal: subtotal.toFixed(2),
+      totalDiscount: totalDiscount.toFixed(2),
+      totalTax: totalTax.toFixed(2),
+      total: total.toFixed(2),
+      estimatedDeliveryDate: formattedDate,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 exports.updateCartItemQuantity = async (req, res, next) => {
@@ -172,94 +226,13 @@ exports.updateCartItemQuantity = async (req, res, next) => {
   }
 };
 
-exports.getCart = async (req, res) => {
-  try {
-    const userId = req.user.id;
 
-    // Step 1: Fetch the cart and its associated items and products
-    const cart = await Cart.findOne({
-      where: { userId },
-      include: [
-        {
-          model: CartItem,
-          as: 'cartItems',
-          attributes: ['id', 'quantity', 'price', 'discount', 'tax'],
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['id', 'productName', 'imageUrl', 'size', 'color'],
-            },
-          ],
-        },
-      ],
-    });
-
-    let totalDiscount = 0;
-    let totalTax = 0;
-    let subtotal = 0; // Subtotal for all items
-    let items = [];
-
-    // Step 4: Calculate the estimated delivery date
-    const estimatedDeliveryDate = new Date();
-    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 5); // Add 5 days for estimated delivery
-
-    // Format the date to a readable format (e.g., "25 April, 2024")
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = estimatedDeliveryDate.toLocaleDateString('en-US', options);
-
-    // Step 2: Check if the cart has items and assign to `items` array
-    if (cart && Array.isArray(cart.cartItems)) {
-      items = cart.cartItems;
-
-      // Step 3: Calculate totals for individual items and update subtotal
-      items = items.map((item) => {
-        const itemPrice = item.price || 0;
-        const itemDiscount = item.discount || 0;
-        const itemTax = item.tax || 0;
-
-        // Calculate the individual total for each item: (price - discount + tax) * quantity
-        const individualTotal = (itemPrice - itemDiscount + itemTax) * item.quantity;
-
-        // Add the individual total to subtotal
-        subtotal += individualTotal;
-
-        // Accumulate discount and tax
-        totalDiscount += itemDiscount * item.quantity;
-        totalTax += itemTax * item.quantity;
-
-        return {
-          ...item.toJSON(), // Keep the rest of the item properties
-          individualTotal: individualTotal.toFixed(2), // Add individual total to each item
-        };
-      });
-    }
-
-    // Step 4: Calculate the final total price (Subtotal - Discount + Tax)
-    const total = subtotal;
-
-    // Step 5: Render the view with items, subtotal, total price, total discount, and tax
-    res.render('items/cart', {
-      showSidebar: false,
-      items,
-      subtotal: subtotal.toFixed(2), // Pass the calculated subtotal
-      totalDiscount: totalDiscount.toFixed(2), // Total discount for display
-      totalTax: totalTax.toFixed(2), // Total tax for display
-      total: total.toFixed(2), // Grand total amount
-            estimatedDeliveryDate: formattedDate,
-
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
-  }
-};
 
 exports.deleteCartItem = async (req, res, next) => {
   const cartItemId = req.params.id; // Get cart item ID from URL parameters
 
   try {
-      // Find the cart item by ID
+      // Step 1: Find the cart item by ID
       const cartItem = await CartItem.findOne({ where: { id: cartItemId } });
 
       if (!cartItem) {
@@ -270,13 +243,29 @@ exports.deleteCartItem = async (req, res, next) => {
           return res.redirect('/cart'); // Redirect to cart page or handle error appropriately
       }
 
-      // Delete the cart item
+      // Step 2: Get the Cart ID from the cart item
+      const cartId = cartItem.cartId;
+
+      // Step 3: Delete the cart item
       await cartItem.destroy();
 
-      req.session.message = {
-          type: 'info',
-          message: 'Cart item deleted successfully'
-      };
+      // Step 4: Check if the Cart is empty after deletion
+      const remainingItemsCount = await CartItem.count({ where: { cartId: cartId } });
+      if (remainingItemsCount === 0) {
+          // If there are no remaining items, delete the cart
+          await Cart.destroy({ where: { id: cartId } });
+          req.session.message = {
+              type: 'info',
+              message: 'Cart deleted as it was empty'
+          };
+      } else {
+          req.session.message = {
+              type: 'info',
+              message: 'Cart item deleted successfully'
+          };
+      }
+
+      // Step 5: Redirect to cart page
       res.redirect('/cart'); // Redirect to cart page or wherever appropriate
   } catch (err) {
       console.error('Error deleting cart item:', err);
@@ -290,76 +279,362 @@ exports.deleteCartItem = async (req, res, next) => {
 
 
 
-exports.checkOut = (req, res, next)=>{
-  res.render('items/order_checkout', {title: "Items List | Order Your Jersey",  showSidebar: false });
-}
 
 
 
-
-
-
-exports.postOrder = async (req, res, next) => {
+exports.getAccount = async (req, res, next) => {
   try {
-    // Step 1: Get userId from request and order details from request body
-    const { userId } = req.user; // Assuming you have the user information attached to the request
-    const {
-      productId,
-      firstname,
-      lastname,
-      email,
-      phone,
-      address,
-      postal_code,
-      payment_method,
-      shipping_method
-    } = req.body; // Destructure all necessary fields from the body
-     console.log(req.body)
-    // Step 2: Fetch products from the user's cart if productId is not provided directly
-    let cartProducts;
-    if (!productId) {
-      cartProducts = await Cart.findAll({ where: { userId }, include: Product });
-      if (!cartProducts || cartProducts.length === 0) {
-        return res.status(404).json({ message: 'No products in cart' });
-      }
-    }
+    const userId = req.session.userId;
 
-    // Step 3: Create an order for each product
-    const orderPromises = (cartProducts || [{ productId }]).map(async (item) => {
-      return CartItem.create({
-        userId,
-        productId: item.productId, // Include the productId for each order
-        orderDate: new Date(),
-        status: 'Processing', // Initial order status
-        firstname,
-        lastname,
-        email,
-        phone,
-        address,
-        postal_code,
-        payment_method,
-        shipping_method
-      });
+    // Get cart totals
+    const { subtotal, totalDiscount, totalTax } = await calculateCartTotals(userId);
+
+    // Estimated delivery date
+    const estimatedDeliveryDate = 'October 10, 2024'; // Example date
+
+    // Clear the session message before rendering
+    const message = req.session.message || null;
+    req.session.message = null; // Clear the message after capturing it
+
+    // Render the view with dynamic values
+    res.render('items/create_account', {
+      title: "Items List | Order Your Jersey",
+      showSidebar: false,
+      message, // Pass the session message to the template
+
+      subtotal: subtotal.toFixed(2),
+      totalDiscount: totalDiscount.toFixed(2),
+      totalTax: totalTax.toFixed(2),
+      total: subtotal.toFixed(2), // If total is just subtotal in this case
+      estimatedDeliveryDate,
     });
-
-    const orders = await Promise.all(orderPromises);
-
-    // Step 4: Respond with the created orders
-    res.status(201).json({
-      message: 'Order placed successfully!',
-      orders,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to place the order' });
+    
+  } catch (error) {
+    console.error("Error fetching cart details:", error);
+    next(error);
   }
 };
 
-// exports.postOrder = (req, res, next)=>{
 
 
 
-//   res.render('tems/order_checkout', {title: "Items List | Order Your Jersey",  showSidebar: false });
-// }
+exports.createAccount = async (req, res, next) => {
+  const { firstName, lastName, email, phone } = req.body;
+
+  try {
+    // Check if the user already exists
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+      // Update the user's details
+      await existingUser.update({
+        firstName,
+        lastName,
+        phone,
+      });
+
+      req.session.message = {
+        type: 'success',
+        message: 'Account updated successfully',
+      };
+      return res.redirect('/shipping_details');
+    }
+
+    // Create a new user if not found
+    const newUser = await User.create({
+      firstName,
+      lastName,
+      email,
+      phone,
+    });
+
+    req.session.message = {
+      type: 'success',
+      message: 'Account created successfully',
+    };
+    res.redirect('/shipping_details');
+  } catch (err) {
+    console.error("Error in account creation/updating:", err);
+    req.session.message = {
+      type: 'danger',
+      message: err.message,
+    };
+    res.redirect('/create_account');
+  }
+};
+
+// exports.createAccount = async (req, res, next) => {
+//   const { firstName, lastName, email, phone, productId } = req.body; 
+//   const sessionId = req.session.id;
+
+//   try {
+//     // Check if session ID exists
+//     if (!sessionId) {
+//       req.session.message = {
+//         type: 'danger',
+//         message: 'Session ID not found. Please try again.',
+//       };
+//       console.log('Session ID not found');
+//       return res.redirect('/create_account');
+//     }
+
+//     // Validate input fields
+//     if (!firstName || !lastName || !email || !phone || !productId) {
+//       req.session.message = {
+//         type: 'danger',
+//         message: 'All fields are required.',
+//       };
+//       console.log('Input validation failed');
+//       return res.redirect('/create_account');
+//     }
+
+//     // Check for existing user
+//     const existingUser = await User.findOne({ where: { email } });
+//     const product = await Product.findByPk(productId);
+
+//     // Check if the product exists
+//     if (!product) {
+//       req.session.message = {
+//         type: 'danger',
+//         message: 'Product not found',
+//       };
+//       console.log('Product not found');
+//       return res.redirect('/create_account');
+//     }
+
+//     if (existingUser) {
+//       // Update user details
+//       await existingUser.update({ firstName, lastName, phone });
+//       await Order.update(
+//         { userId: existingUser.id },
+//         { where: { userId: null } }
+//       );
+//       await associateProductWithUser(existingUser.id, product.id);
+
+//       req.session.message = {
+//         type: 'success',
+//         message: 'Account updated successfully',
+//       };
+//       return res.redirect('/shipping_details');
+//     }
+
+//     // Create a new user if not found
+//     const newUser = await User.create({
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//     });
+
+//     // Associate the new user with the product
+//     await associateProductWithUser(newUser.id, product.id);
+
+//     req.session.message = {
+//       type: 'success',
+//       message: 'Account created successfully',
+//     };
+//     return res.redirect('/shipping_details');
+
+//   } catch (err) {
+//     console.error("Error in account creation/updating:", err);
+//     req.session.message = {
+//       type: 'danger',
+//       message: 'An error occurred while processing your request. Please try again later.',
+//     };
+//     return res.redirect('/create_account');
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+exports.getShippingDetails = async (req, res, next) => {
+  try {
+    const userId = req.session.userId;
+
+    // Get cart totals
+    const { subtotal, totalDiscount, totalTax,  } = await calculateCartTotals(userId);
+
+    // Calculate the total amount including delivery charge
+    const total = parseFloat(subtotal) 
+
+    // Estimated delivery date
+    const estimatedDeliveryDate = 'October 10, 2024'; // Example date
+
+    // Render the view with dynamic values
+    res.render('items/shipping_details', {
+      title: "Items List | Order Your Jersey",
+      showSidebar: false,
+      subtotal: subtotal.toFixed(2),
+      totalDiscount: totalDiscount.toFixed(2),
+      totalTax: totalTax.toFixed(2),
+      total: total.toFixed(2), // Correctly calculate total
+      estimatedDeliveryDate,
+    });
+  } catch (error) {
+    console.error("Error fetching cart details:", error);
+    next(error);
+  }
+}
+
+
+exports.createShippingDetails = async (req, res, next) => {
+  const { address, state, city, postal_code, country } = req.body;
+
+  if (!address || !city || !state || !postal_code || !country) {
+    return res.status(400).send('All shipping fields are required.');
+  }
+
+  try {
+    // Retrieve the currently logged-in user from the request
+    const user = req.user;
+
+    if (!user) {
+      req.session.message = { type: 'danger', message: 'User must be logged in to create a shipping address.' };
+      return res.redirect('/shipping_details');
+    }
+
+    // Create a new shipping address associated with the user
+    const newShippingDetails = await ShippingDetail.create({
+      userId: user.id, // Assuming user has been set in req.user
+      address,
+      state,
+      city,
+      postal_code,
+      country
+    });
+
+    req.session.message = {
+      type: 'success',
+      message: 'Shipping address successfully created.',
+    };
+    res.redirect('/checkout');
+  } catch (err) {
+    console.error('Error in creating shipping details:', err);
+    req.session.message = {
+      type: 'danger',
+      message: 'An error occurred while creating the shipping address. Please try again.',
+    };
+    res.redirect('/shipping_details');
+  }
+};
+
+
+exports.getOrder = async (req, res, next) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).send('You must be logged in to view the checkout page');
+  }
+
+  try {
+    const orders = await Order.findAll({ where: { userId } });
+    console.log('Orders for user:', orders); // Debug log
+
+    const latestOrder = await Order.findOne({
+      where: { userId },
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!latestOrder) {
+      return res.status(404).send('No order found for checkout');
+    }
+
+    res.render('items/checkout', {
+      title: 'Items List | Order Your Jersey',
+      showSidebar: false,
+      totalAmount: latestOrder.amount,
+      orderNo: latestOrder.order_no,
+      orderDate: latestOrder.createdAt.toISOString().split('T')[0],
+      status: latestOrder.status,
+    });
+  } catch (error) {
+    console.error('Error retrieving order for checkout:', error);
+    res.status(500).send('Error occurred while loading the checkout page');
+  }
+};
+
+
+
+exports.createOrder = async (req, res, next) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    console.log('User not logged in');
+    return res.status(401).send('You must be logged in to checkout');
+  }
+
+  try {
+    const cart = await Cart.findOne({ where: { userId } });
+    if (!cart) {
+      console.log('Cart is empty');
+      return res.status(400).send('Cart is empty');
+    }
+
+    const cartItems = await CartItem.findAll({ where: { cartId: cart.id } });
+    if (cartItems.length === 0) {
+      console.log('No items in cart to order');
+      return res.status(400).send('No items in cart to order');
+    }
+
+    let totalAmount = 0;
+    for (const item of cartItems) {
+      const product = await Product.findByPk(item.productId);
+      totalAmount += product.price * item.quantity;
+    }
+
+    const orderNo = `ORD-${uuidv4().slice(0, 8).toUpperCase()}`;
+
+    // Create the order
+    const order = await Order.create({
+      userId,
+      order_no: orderNo,
+      status: 'pending',
+      amount: totalAmount,
+    });
+
+    if (!order) {
+      console.error('Order creation failed');
+      return res.status(500).send('Failed to create order');
+    }
+
+    for (const item of cartItems) {
+      await OrderItem.create({
+        orderId: order.id,
+        productId: item.productId,
+        quantity: item.quantity,
+      });
+    }
+
+    await CartItem.destroy({ where: { cartId: cart.id } });
+    await cart.destroy();
+
+    console.log('Order created:', order);
+
+    res.render('items/checkout', {
+      orderNo: orderNo,
+      totalAmount: totalAmount.toFixed(2),
+      status: order.status,
+      orderDate: new Date().toISOString().split('T')[0],
+      discount: 60.00,
+    });
+  } catch (err) {
+    console.error('Error occurred during checkout:', err);
+    res.status(500).send('Error occurred during checkout');
+  }
+};
+
+
+
+
+
+
+
+
 
 

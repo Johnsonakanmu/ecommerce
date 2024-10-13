@@ -1,0 +1,81 @@
+<div class="page-content" style="margin: 70px auto; display: flex; justify-content: center;">
+     <div class="container-xxl">
+       <div class="row">
+         <div class="col-lg-6">
+           <div class="card" style="margin: auto;">
+             <div class="card-header">
+               <h4 class="card-title">Order Summary</h4>
+             </div>
+             <div class="card-body">
+               <div class="table-responsive">
+                 <table class="table mb-0">
+                   <tbody>
+                     <tr>
+                       <td class="px-0">
+                         <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:clipboard-text-broken"></iconify-icon> Sub Total : </p>
+                       </td>
+                       <td class="text-end text-dark fw-medium px-0"><%= totalAmount %></td>
+                     </tr>
+                     <tr>
+                       <td class="px-0">
+                         <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:ticket-broken" class="align-middle"></iconify-icon> Discount : </p>
+                       </td>
+                       <td class="text-end text-dark fw-medium px-0">-$<%= discount %></td>
+                     </tr>
+                     <!-- <tr>
+                       <td class="px-0">
+                         <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon> Delivery Charge : </p>
+                       </td>
+                       <td class="text-end text-dark fw-medium px-0">$00.00</td>
+                     </tr> -->
+                     <tr>
+                       <td class="px-0">
+                         <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:kick-scooter-broken" class="align-middle"></iconify-icon> Status : </p>
+                       </td>
+                       <td class="text-end text-dark fw-medium px-0"><%= status %></td>
+                     </tr>
+                     <tr>
+                       <td class="px-0">
+                         <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:calculator-minimalistic-broken" class="align-middle"></iconify-icon> Order Date : </p>
+                       </td>
+                       <td class="text-end text-dark fw-medium px-0"><%= orderDate %></td>
+                     </tr>
+                   </tbody>
+                 </table>
+               </div>
+             </div>
+             <div class="card-footer bg-light-subtle">
+               <div class="d-flex align-items-center justify-content-between">
+                 <div>
+                   <p class="fw-medium text-dark mb-0">Total Amount</p>
+                 </div>
+                 <div>
+                   <p class="fw-medium text-dark mb-0">$<%= totalAmount %></p>
+                 </div>
+               </div>
+               <div class="alert alert-warning alert-icon mt-3 mb-0" role="alert">
+                 <div class="d-flex align-items-center">
+                   <div class="avatar-sm rounded bg-warning d-flex justify-content-center align-items-center fs-22 me-2 flex-shrink-0">
+                     <iconify-icon icon="solar:kick-scooter-broken" class="align-middle text-white"></iconify-icon>
+                   </div>
+                   <div class="flex-grow-1">
+                     Estimated Delivery by 25 April, 2024
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+   
+           <!-- Form for Submitting Order -->
+           <form id="checkout-form" method="POST" action="/checkout">
+             <div class="main-btn my-4 text-end">
+               <a href="/cart" class="btn btn-danger">Back To Cart</a>
+               <button class="btn btn-success" type="submit">Checkout Order</button>
+             </div>
+           </form>
+           
+         </div>
+       </div>
+     </div>
+   </div>
+   

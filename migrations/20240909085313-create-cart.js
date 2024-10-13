@@ -17,55 +17,9 @@ module.exports = {
           key: 'id'
         }
       },
-      firstname: { 
-        type: DataTypes.STRING,
+      sessionId: {
+        type: DataTypes.STRING,  // Unique session ID for guest users
         allowNull: true,
-      },
-      lastname: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        unique: true,  
-      },
-      phone: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      address: {
-        type: DataTypes.STRING,
-        allowNull: true,   
-      },
-      city: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      country: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      postal_code: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      shipping_method: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      payment_method: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      orderDate: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW, // Automatically sets the date when an order is created
-      },
-      status: {
-        type: DataTypes.ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'),
-        allowNull: false,
-        defaultValue: 'Pending', // Default status
       },
       createdAt: {
         allowNull: false,

@@ -34,6 +34,7 @@
                                             <th>Price</th>
                                             <th>Stock</th>
                                             <th>Rating</th>
+                                            <!-- <th>CreatedBy</th> -->
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -54,28 +55,30 @@
                                                         <div>
                                                             <a href="#!" class="text-dark fw-medium fs-15"><%= row.productName %></a>
                                                             <p class="text-muted mb-0 mt-1 fs-13"><span>Size: <%= row.size %> : </span>S, M, L, XL</p>
-                                                            </div>                                                    
                                                         </div>
+                                                    </div>
                                                 </td>
                                                 <td>$<%= row.price %></td>
                                                 <td>
-                                                  <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity - (row.soldAmount || 0) %> Item(s)</span> Left</p>
-                                                  <p class="mb-0 text-muted"><%= row.soldAmount || 0 %> Sold</p>
-                                                  <!-- Hidden form to update sold amount -->
-                                                  <form id="updateSoldForm<%= row.id %>" action="/updateSoldAmount/<%= row.id %>" method="POST" style="display: none;">
-                                                    <input type="number" name="soldAmount" value="1" min="1"> <!-- Default value; adjust as needed -->
-                                                    <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
-                                                  </form>
-                                                  <!-- <a href="#" onclick="document.getElementById('updateSoldForm<%= row.id %>').submit();" class="btn btn-soft-primary btn-sm">
-                                                    Update Sold Amount
-                                                  </a>
-                                                </td> -->
-        
+                                                    <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity - (row.soldAmount || 0) %> Item(s)</span> Left</p>
+                                                    <p class="mb-0 text-muted"><%= row.soldAmount || 0 %> Sold</p>
+                                                    <!-- Hidden form to update sold amount -->
+                                                    <form id="updateSoldForm<%= row.id %>" action="/updateSoldAmount/<%= row.id %>" method="POST" style="display: none;">
+                                                        <input type="number" name="soldAmount" value="1" min="1"> <!-- Default value; adjust as needed -->
+                                                        <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
+                                                    </form>
+                                                </td>
                                                 <td>
                                                     <span class="badge p-1 bg-light text-dark fs-12 me-1">
                                                         <i class="bx bxs-star align-text-top fs-14 text-warning me-1"></i>
                                                     </span> 4.5 Review
                                                 </td>
+                                                <!-- <td>
+                                                    <a href="#!" class="text-dark fw-medium fs-15">
+                                                        <p><%= row.creator ? row.creator.name : 'Unknown' %></p>
+                                                    </a>
+                                                </td> -->
+                                                
                                                 <td>
                                                     <div class="d-flex gap-2">
                                                         <a href="/edit_product/<%= row.id %>" class="btn btn-soft-primary btn-sm">
@@ -97,6 +100,7 @@
                                 <h1 class="text-center text-secondary mt-4">No Product Found in the database!</h1>
                             <% } %>
                         </div>
+                        
                         <!-- end table-responsive -->
                     </div>
                     <div class="card-footer border-top">

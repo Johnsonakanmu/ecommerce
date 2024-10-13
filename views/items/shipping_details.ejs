@@ -1,0 +1,120 @@
+<div class="d-flex flex-column h-100 p-3">
+    <div class="d-flex flex-column flex-grow-1">
+         <div class="row h-100">
+              <div class="col-xxl-7">
+                   <div class="row justify-content-center h-100">
+                        <div class="col-lg-6 py-lg-5">
+                             <div class="d-flex flex-column h-100 justify-content-center">
+                                  <div class="auth-logo mb-4">
+                                      <a>
+                                            <img src="assets/images/tripple44fc-pic.png" height="50" alt="logo dark">
+                                       </a>
+
+                                       
+                                  </div>
+
+                                  <h2 class="fw-bold fs-24">Shipping Address</h2>
+
+                                  <p class="text-muted mt-1 mb-4">Welcome to the user creation process! Please fill out the required fields to set up your account.</p>
+
+                                  <div class="mb-5">
+                                       <form action="/shipping_details" method="POST" class="authentication-form">
+                                        <div class="mb-3">
+                                             <label for="address" class="form-label">Full Address</label>
+                                             <textarea class="form-control" name="address" id="address" rows="3" required placeholder="Enter address"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                             <label for="zipcode" class="form-label">Zip-Code</label>
+                                             <input type="number" name="postal_code" id="zipcode" class="form-control" placeholder="zip-code" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                             <label class="form-label" for="city">City</label>
+                                             <input type="text" id="city" class="form-control" name="city" placeholder="Enter your City" required>
+                                        </div>
+                                            
+                                        <div class="mb-3">
+                                                 <label class="form-label" for="State">State</label>
+                                                 <input type="text" id="state" name="state" class="form-control" placeholder="Enter your state" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                             <label class="form-label" for="country">Country</label>
+                                             <input type="text" id="country" class="form-control" name="country" placeholder="Enter your state:" required>
+                                        </div>
+                                           
+
+                                            <div class="mb-1 text-center d-grid">
+                                                 <button class="btn btn-soft-primary" type="submit">Shipping Address</button>
+                                            </div>
+                                       </form>
+
+                                  </div>
+                             </div>
+                        </div>
+                   </div>
+              </div>
+
+              <div class="col-lg-4" style="margin-top: 200px;">
+               <div class="card text-center bg-primary overflow-hidden z-1">
+                    <div class="card-body p-4">
+                         <h4 class="card-title text-white">Have a Promo Code ?</h4>
+                         <div class="position-relative mt-3">
+                              <div class="form-button">
+                                   <form class="d-flex align-items-center justify-content-center">
+                                        <input type="text" class="form-control w-50 border-0 rounded bg-light text-white bg-opacity-25" placeholder="code" required="" value="CODE123">
+                                        <button type="button" data-toast data-toast-text="Your Promo Code Apply Successfully" data-toast-gravity="top" data-toast-position="center" data-toast-className="success" data-toast-duration="3000" class="btn btn-light ms-2 rounded-2">
+                                             Apply
+                                        </button>
+                                   </form>
+                              </div>
+                         </div>
+                    </div>
+                    
+               </div>
+
+               <div class="card">
+                    <div class="card-header">
+                         <h4 class="card-title">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                         <div class="table-responsive">
+                              <table class="table mb-0">
+                                   <tbody>
+                                        <tr>
+                                             <td class="px-0">
+                                                  <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:clipboard-text-broken"></iconify-icon> Sub Total : </p>
+                                             </td>
+                                             <td class="text-end text-dark fw-medium px-0">$<%= subtotal %></td>
+                                        </tr>
+                                        
+
+                                   </tbody>
+                              </table>
+                         </div>
+                    </div>
+                    <div class="card-footer bg-light-subtle border-top">
+                         <div class="d-flex align-items-center justify-content-between">
+
+                              <div>
+                                   <p class="fw-medium text-dark mb-0">Total Amount</p>
+                              </div>
+                              <div>
+                                   <p class="fw-medium text-dark mb-0"><%= total %></p>
+                              </div>
+                         </div>
+                         <div class="alert alert-warning alert-icon mt-3 mb-0" role="alert">
+                              <div class="d-flex align-items-center">
+                                   <div class="avatar-sm rounded bg-warning d-flex justify-content-center align-items-center fs-22 me-2 flex-shrink-0">
+                                        <iconify-icon icon="solar:kick-scooter-broken" class="align-middle text-white"></iconify-icon>
+                                   </div>
+                                   <div class="flex-grow-1">
+                                      Estimated Delivery by <%= estimatedDeliveryDate %>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+         </div>
+    </div>
+</div>

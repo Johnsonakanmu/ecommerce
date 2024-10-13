@@ -1,0 +1,120 @@
+<div class="d-flex flex-column h-100 p-3">
+    <div class="d-flex flex-column flex-grow-1">
+         <div class="row h-100">
+              <div class="col-xxl-7">
+                   <div class="row justify-content-center h-100">
+                        <div class="col-lg-6 py-lg-5">
+                             <div class="d-flex flex-column h-100 justify-content-center">
+                                  <div class="auth-logo mb-4">
+                                      <a>
+                                            <img src="assets/images/tripple44fc-pic.png" height="50" alt="logo dark">
+                                       </a>
+
+                                       
+                                  </div>
+
+                                  <h2 class="fw-bold fs-24">Create Account</h2>
+
+                                  <p class="text-muted mt-1 mb-4">Welcome to the user creation process! Please fill out the required fields to set up your account.</p>
+
+                                  <% if (message) { %> <!-- Use the passed message variable -->
+                                   <div class="<%= message.type %>"><%= message.message %></div>
+                                   <% } %>
+
+                                  <div class="mb-5">
+                                       <form action="/create_account" method="POST" class="authentication-form">
+                                        <div class="mb-3">
+                                             <label class="form-label" for="firstName">FirstName</label>
+                                             <input type="text" id="firstName" name="firstName" class="form-control bg-" placeholder="Enter first Name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                             <label class="form-label" for="lastName">LastName</label>
+                                             <input type="text" id="lastName" name="lastName" class="form-control bg-" placeholder="Enter your Last Name" required>
+                                        </div>
+                                            <div class="mb-3">
+                                                 <label class="form-label" for="email">Email</label>
+                                                 <input type="email" id="email" name="email" class="form-control bg-" placeholder="Enter your email" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                 <label class="form-label" for="phone">Phone</label>
+                                                 <input type="number" id="phone" name="phone" class="form-control" placeholder="Enter your phone no:" required>
+                                            </div>
+                                           
+
+                                            <div class="mb-1 text-center d-grid">
+                                                 <button class="btn btn-soft-primary" type="submit">Creata Account</button>
+                                            </div>
+                                       </form>
+
+                                  </div>
+                             </div>
+                        </div>
+                   </div>
+              </div>
+
+              <div class="col-lg-4" style="margin-top: 80px;">
+               <div class="card text-center bg-primary overflow-hidden z-1">
+                    <div class="card-body p-4">
+                         <h4 class="card-title text-white">Have a Promo Code ?</h4>
+                         <div class="position-relative mt-3">
+                              <div class="form-button">
+                                   <form class="d-flex align-items-center justify-content-center">
+                                        <input type="text" class="form-control w-50 border-0 rounded bg-light text-white bg-opacity-25" placeholder="code" required="" value="CODE123">
+                                        <button type="button" data-toast data-toast-text="Your Promo Code Apply Successfully" data-toast-gravity="top" data-toast-position="center" data-toast-className="success" data-toast-duration="3000" class="btn btn-light ms-2 rounded-2">
+                                             Apply
+                                        </button>
+                                   </form>
+                              </div>
+                         </div>
+                    </div>
+                    
+               </div>
+
+               <div class="card">
+                    <div class="card-header">
+                         <h4 class="card-title">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                         <div class="table-responsive">
+                              <table class="table mb-0">
+                                   <tbody>
+                                        <tr>
+                                             <td class="px-0">
+                                                  <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:clipboard-text-broken"></iconify-icon> Sub Total : </p>
+                                             </td>
+                                             <td class="text-end text-dark fw-medium px-0">$<%= subtotal %></td>
+                                        </tr>
+                                        
+
+                                   </tbody>
+                              </table>
+                         </div>
+                    </div>
+                    <div class="card-footer bg-light-subtle border-top">
+                         <div class="d-flex align-items-center justify-content-between">
+
+                              <div>
+                                   <p class="fw-medium text-dark mb-0">Total Amount</p>
+                              </div>
+                              <div>
+                                   <p class="fw-medium text-dark mb-0"><%= total %></p>
+                              </div>
+                         </div>
+                         <div class="alert alert-warning alert-icon mt-3 mb-0" role="alert">
+                              <div class="d-flex align-items-center">
+                                   <div class="avatar-sm rounded bg-warning d-flex justify-content-center align-items-center fs-22 me-2 flex-shrink-0">
+                                        <iconify-icon icon="solar:kick-scooter-broken" class="align-middle text-white"></iconify-icon>
+                                   </div>
+                                   <div class="flex-grow-1">
+                                      Estimated Delivery by <%= estimatedDeliveryDate %>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+
+               
+          </div>
+         </div>
+    </div>
+</div>

@@ -9,10 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({User, Product, CartItem}) {
+    static associate({User, Product, CartItem, OrderItem}) {
       // define association here
       this.belongsTo(User, { foreignKey: 'userId', as: 'user' });
       this.hasMany(CartItem, { foreignKey: 'cartId', as: 'cartItems'}); // Cart and CartItem association
+      this.hasMany(OrderItem, { foreignKey: 'cartId', as: 'orderItems', onDelete: 'CASCADE' });
 
       // Cart belongs to many products through CartItem
       this.belongsToMany(Product, {
@@ -32,56 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
-    firstname: { 
-      type: DataTypes.STRING,
+    sessionId: {
+      type: DataTypes.STRING,  // Unique session ID for guest users
       allowNull: true,
-    },
-    lastname: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      unique: true,  
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: true,   
-    },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    country: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    postal_code: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    shipping_method: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    payment_method: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    orderDate: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW, // Automatically sets the date when an order is created
-    },
-    status: {
-      type:DataTypes.ENUM('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'),
-      allowNull: false,
-      defaultValue: 'Pending', // Default status
-    },
+    }
   }, {
     sequelize,
     tableName: 'carts',

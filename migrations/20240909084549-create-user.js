@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('users', 'createdBy', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -26,30 +26,16 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      address: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       phone: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      city: {
-        type: DataTypes.STRING,
-        allowNull: true,
+      isAdmin: {  // Change from role to isAdmin
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false // Default is not an admin
       },
-      country: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      postal_code: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      state: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
+      
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE
@@ -61,6 +47,6 @@ module.exports = {
     });
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('users', 'createdBy',);
   }
 };

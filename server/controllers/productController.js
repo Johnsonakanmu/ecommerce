@@ -3,6 +3,8 @@ const fs = require("fs");
 
 
 exports.homePage = (req, res, next) => {
+  
+  
   res.render("product/index", {
     title: "Home Page | Order Your Jersey",
     showSidebar: true,
@@ -18,8 +20,17 @@ exports.getAllProducts = async (req, res) => {
     const { count, rows: products } = await Product.findAndCountAll({
       limit,
       offset: (currentPage - 1) * limit,
-      attributes: ['id', 'productName', 'price', 'quantity', 'soldAmount', 'imageUrl', 'size'],
+      attributes: ['id', 'productName', 'price', 'quantity', 'soldAmount', 'imageUrl', 'size', 'createdBy' ],
       order: [['createdAt', 'DESC']], // Adjust order as needed
+      include: [
+        {
+          model: User,
+          as: 'creator',
+          attributes: ['id', 'name'],
+          required: false, // Make this a left join
+        },
+      ],
+
     });
 
     const totalPages = Math.ceil(count / limit);
@@ -84,15 +95,97 @@ exports.addProducts = (req, res, next) => {
   });
 };
 
+// exports.addProduct = async (req, res, next) => {
+//   const {
+//     productName, productCategories, productBrand, description, gender, color,
+//     size, tagNumber, quantity, tag, price, discount, tax, discountType,
+     
+//   } = req.body;
+
+//   try {
+//     // Fetch the user manually by ID (assuming you are using a static user ID for now)
+//     const user = req.user; // Access the authenticated user
+
+//     if (!user) {
+//       throw new Error("User not found.");
+//     }
+
+//     // Check if the file was uploaded
+//     if (!req.file) {
+//       throw new Error("Product image is required.");
+//     }
+
+//     // Convert price and discount to numbers
+//     const priceValue = parseFloat(price);
+//     const discountValue = parseFloat(discount);
+    
+
+//     // Calculate the discounted price
+//     let sellingPrice = priceValue;
+//     let isDiscount = false;
+
+//     // Check if discount type and values are valid
+//     if (discountType === "Percentage") {
+//       // Calculate discount as a percentage
+//       isDiscount = true;
+//       sellingPrice = priceValue - (priceValue * discountValue / 100);
+//     } else if (discountType === "Fixed") {
+//       // Apply a fixed discount amount
+//       isDiscount = true;
+//       sellingPrice = priceValue - discountValue;
+//     } else {
+//       console.log("Missing or invalid discount details. Skipping discount calculation.");
+//     }
+    
+   
+//     // Calculate the final price including tax
+//     const finalPrice = sellingPrice;
+    
+
+//     // Create a product object
+//     const product = {
+//       productName, productCategories, productBrand, description, gender, color, size,
+//       tagNumber, quantity, tag, price: priceValue, discount: discountValue, tax,
+//       imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
+//        sellingPrice:finalPrice, discountType, isDiscount
+//     };
+
+//     // Create the product for the manually fetched user
+//     const productObj = await user.createProduct(product);
+
+//     // Set success message and redirect
+//     req.session.message = {
+//       data: product,
+//       type: "success",
+//       message: "Product added successfully",
+//     };
+//     res.redirect("/");
+//   } catch (err) {
+//     // Log the error and send a JSON response or redirect to an error page
+//     console.error("Error adding product:", err);
+
+//     req.session.message = {
+//       type: "danger",
+//       message: err.message,
+//     };
+
+//     res.redirect("/"); // Redirect to an error page or similar
+//   }
+// };
+
+
 exports.addProduct = async (req, res, next) => {
   const {
     productName, productCategories, productBrand, description, gender, color,
     size, tagNumber, quantity, tag, price, discount, tax, discountType,
-    isDiscount 
   } = req.body;
 
   try {
-    // Fetch the user manually by ID (assuming you are using a static user ID for now)
+
+    // if (!req.user.isAdmin) {
+    //   return res.status(403).json("You do not have permission to perform this action.");
+    // }
+
     const user = req.user; // Access the authenticated user
 
     if (!user) {
@@ -108,57 +201,44 @@ exports.addProduct = async (req, res, next) => {
     const priceValue = parseFloat(price);
     const discountValue = parseFloat(discount);
     
-
     // Calculate the discounted price
     let sellingPrice = priceValue;
     let isDiscount = false;
 
-    // Check if discount type and values are valid
     if (discountType === "Percentage") {
-      // Calculate discount as a percentage
       isDiscount = true;
       sellingPrice = priceValue - (priceValue * discountValue / 100);
     } else if (discountType === "Fixed") {
-      // Apply a fixed discount amount
       isDiscount = true;
       sellingPrice = priceValue - discountValue;
-    } else {
-      console.log("Missing or invalid discount details. Skipping discount calculation.");
     }
-    
-   
-    // Calculate the final price including tax
-    const finalPrice = sellingPrice;
-    
 
-    // Create a product object
+    // Create a product object, including the userId and createdBy fields
     const product = {
       productName, productCategories, productBrand, description, gender, color, size,
       tagNumber, quantity, tag, price: priceValue, discount: discountValue, tax,
-      imageUrl: req.file.filename, // Ensure you're using Multer for file uploads
-       sellingPrice:finalPrice, discountType, isDiscount
+      imageUrl: req.file.filename,
+      sellingPrice, discountType, isDiscount,
+      userId: user.id,         // Set userId to the authenticated user's ID
+      createdBy: user.id       // Set createdBy to the authenticated user's ID
     };
 
-    // Create the product for the manually fetched user
-    const productObj = await user.createProduct(product);
+    // Create the product
+    const productObj = await Product.create(product); // Ensure you are using the correct model
 
-    // Set success message and redirect
     req.session.message = {
       data: product,
       type: "success",
       message: "Product added successfully",
     };
-    res.redirect("/items");
+    res.redirect("/");
   } catch (err) {
-    // Log the error and send a JSON response or redirect to an error page
     console.error("Error adding product:", err);
-
     req.session.message = {
       type: "danger",
       message: err.message,
     };
-
-    res.redirect("/"); // Redirect to an error page or similar
+    res.redirect("/");
   }
 };
 
@@ -215,7 +295,7 @@ exports.updateProduct = async (req, res, next) => {
        type: "danger",
        message: "Product not found",
      };
-     return res.redirect("/items");
+     return res.redirect("/edit_product");
    }
 
     // Check if the file was uploaded and update the image if present
@@ -227,6 +307,8 @@ exports.updateProduct = async (req, res, next) => {
     // Convert price and discount to numbers
     const priceValue = parseFloat(price);
     const discountValue = parseFloat(discount);
+
+    
 
     // Calculate the discounted price
     let sellingPrice = priceValue;
@@ -247,7 +329,10 @@ exports.updateProduct = async (req, res, next) => {
 
     // Calculate the final price including tax
     const finalPrice = sellingPrice;
+
+    // Log the result to confirm the state of `isDiscount`
     
+
     // Update the product object with new data
     product.productName = productName;
     product.productCategories = productCategories;

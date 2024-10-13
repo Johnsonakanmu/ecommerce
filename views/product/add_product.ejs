@@ -6,7 +6,9 @@
             
             <div class="col-xl-9 col-lg-8 mt-3">
                 <!-- Start of Single Form -->
-                <form action="/add_product" method="post" enctype="multipart/form-data">
+                <form action="/add_product"  method="post" enctype="multipart/form-data">
+                    <!-- <input type="hidden" name="authToken" value="YOUR_JWT_TOKEN_HERE"> -->
+
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">Product Information</h4>
@@ -139,7 +141,7 @@
                             <div class="row">
                                 <div class="col-lg-4">
                                     <label for="discountType" class="form-label">Select Discount Type</label>
-                                    <select class="form-control" id="discountType" required name="discountType" data-choices data-choices-groups data-placeholder="Select Discount Type">
+                                    <select class="form-control" id="discountType" name="discountType" data-choices data-choices-groups data-placeholder="Select Discount Type">
                                         <option value="">Discount Type</option>
                                         <option value="Percentage">Percentage</option>
                                         <option value="Fixed">Fixed Amount</option>

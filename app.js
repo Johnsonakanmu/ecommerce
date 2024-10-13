@@ -1,4 +1,4 @@
-
+require('dotenv').config()
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const app = express();
@@ -26,12 +26,14 @@ app.use(express.static('public'));
 app.use(expressLayouts);
 app.use(cors());
 app.use(session({
-    secret: 'my secret Key',
-    saveUninitialized: true,
-    resave: false,
-    cookie: {secure: process.env.NODE_ENV === 'production' }
-})
-);
+  secret: process.env.SESSION_SECRET || 'your_default_secret_key', // Use environment variable
+  saveUninitialized: false, // Do not save uninitialized sessions
+  resave: false, // Only save sessions that have been modified
+  cookie: { 
+      secure: process.env.NODE_ENV === 'production', // Secure cookies in production
+      maxAge: 1000 * 60 * 60 * 24 // Optional: set cookie expiration time (1 day)
+  }
+}));
 
 app.use((req, res, next)=>{
     res.locals.message = req.session.message;
@@ -47,15 +49,45 @@ app.use((req, res, next) => {
     next();
   });
 
-  app.use((req, res, next) => {
-    User.findByPk(4).then((user) => {
-      req.user = user;
+ 
+  app.use(async (req, res, next) => {
+    try {
+      // Check if user exists in the session
+      if (req.session && req.session.userId) {
+        // Try to find the user based on session's userId
+        const user = await User.findByPk(req.session.userId);
+        if (user) {
+          req.user = user;  // If user found, attach it to the request object
+          return next();    // Proceed to the next middleware
+        }
+      }
+  
+      // If no user in session or user not found, create a new user
+      const newUser = await User.create({
+        firstName: 'Guest',   // You can customize this part with default values or generate dynamically
+        lastName: 'User',
+        email: 'guest@example.com',
+      });
+  
+      // Save the new user to the session
+      req.session.userId = newUser.id;
+  
+      // Attach the new user to the request object
+      req.user = newUser;
+  
+      // Proceed to the next middleware
       next();
-    }).catch(err => {
+    } catch (err) {
       console.log(err);
-      next(err);  
-    });
+      next(err);  // Pass the error to the next middleware (error handler)
+    }
   });
+  
+  
+  
+  
+  
+  
 
 
 app.use(express.static('uploads'))
