@@ -4,6 +4,65 @@
     <div class="container-xxl">
         <div class="row">
             
+            <div class="col-xl-3 col-lg-4">
+                <div class="card">
+                     <div class="card-body">
+                          <img src="assets/images/product/p-1.png" alt="" class="img-fluid rounded bg-light">
+                          <div class="mt-3">
+                               <h4>Men Black Slim Fit T-shirt <span class="fs-14 text-muted ms-1">(Fashion)</span></h4>
+                               <h5 class="text-dark fw-medium mt-3">Price :</h5>
+                               <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
+                                    <span class="text-muted text-decoration-line-through">$100</span> $80 <small class="text-muted"> (30% Off)</small>
+                               </h4>
+                               <div class="mt-3">
+                                    <h5 class="text-dark fw-medium">Size :</h5>
+                                    <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                         <input type="checkbox" class="btn-check" id="size-s">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s">S</label>
+
+                                         <input type="checkbox" class="btn-check" id="size-m" checked>
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m">M</label>
+
+                                         <input type="checkbox" class="btn-check" id="size-xl">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl">Xl</label>
+
+                                         <input type="checkbox" class="btn-check" id="size-xxl">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl">XXL</label>
+
+                                    </div>
+                               </div>
+                               <div class="mt-3">
+                                    <h5 class="text-dark fw-medium">Colors :</h5>
+                                    <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
+                                         <input type="checkbox" class="btn-check" id="color-dark">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
+
+                                         <input type="checkbox" class="btn-check" id="color-yellow">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
+
+                                         <input type="checkbox" class="btn-check" id="color-white">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white"> <i class="bx bxs-circle fs-18 text-white"></i></label>
+
+                                         <input type="checkbox" class="btn-check" id="color-red">
+                                         <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-red"> <i class="bx bxs-circle fs-18 text-danger"></i></label>
+
+                                    </div>
+                               </div>
+                          </div>
+                     </div>
+                     <div class="card-footer bg-light-subtle">
+                          <div class="row g-2">
+                               <div class="col-lg-6">
+                                    <a href="#!" class="btn btn-outline-secondary w-100">Create Product</a>
+                               </div>
+                               <div class="col-lg-6">
+                                    <a href="#!" class="btn btn-primary w-100">Cancel</a>
+                               </div>
+                          </div>
+                     </div>
+                </div>
+           </div>
+
             <div class="col-xl-9 col-lg-8 mt-3">
                 <!-- Start of Single Form -->
                 <form action="/add_product"  method="post" enctype="multipart/form-data">
@@ -29,7 +88,7 @@
                                         <option value="Clothes">Clothes</option>
                                         <option value="Other">Other</option>
                                     </select>
-                                  </div>
+                            </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
@@ -52,20 +111,20 @@
                                 <div class="col-lg-4">
                                     <div class="mt-3">
                                         <h5 class="text-dark fw-medium">Size :</h5>
-                                        <div class="d-flex flex-wrap gap-2" role="group" required aria-label="Basic checkbox toggle button group">
-                                            <input type="checkbox" class="btn-check" id="size-xs1" name="size" value="XS">
+                                        <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic radio toggle button group">
+                                            <input type="radio" class="btn-check" id="size-xs1" name="size" value="XS">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xs1">XS</label>
-
-                                            <input type="checkbox" class="btn-check" id="size-s1" name="size" value="S">
+                                
+                                            <input type="radio" class="btn-check" id="size-s1" name="size" value="S">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s1">S</label>
-
-                                            <input type="checkbox" class="btn-check" id="size-m1" name="size" value="M">
+                                
+                                            <input type="radio" class="btn-check" id="size-m1" name="size" value="M">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m1">M</label>
-
-                                            <input type="checkbox" class="btn-check" id="size-xl1" name="size" value="XL">
+                                
+                                            <input type="radio" class="btn-check" id="size-xl1" name="size" value="XL">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl1">XL</label>
-
-                                            <input type="checkbox" class="btn-check" id="size-xxl1" name="size" value="XXL">
+                                
+                                            <input type="radio" class="btn-check" id="size-xxl1" name="size" value="XXL">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl1">XXL</label>
                                         </div>
                                     </div>
@@ -74,16 +133,16 @@
                                     <div class="mt-3">
                                         <h5 class="text-dark fw-medium">Colors :</h5>
                                         <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group" required>
-                                            <input type="checkbox" class="btn-check" id="color-dark1" name="color" value="Dark">
+                                            <input type="radio" class="btn-check" id="color-dark1" name="color" value="Dark">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark1"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
 
-                                            <input type="checkbox" class="btn-check" id="color-yellow1" name="color" value="Yellow">
+                                            <input type="radio" class="btn-check" id="color-yellow1" name="color" value="Yellow">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow1"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
 
-                                            <input type="checkbox" class="btn-check" id="color-white1" name="color" value="White">
+                                            <input type="radio" class="btn-check" id="color-white1" name="color" value="White">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white1"> <i class="bx bxs-circle fs-18 text-white"></i></label>
 
-                                            <input type="checkbox" class="btn-check" id="color-red1" name="color" value="Red">
+                                            <input type="radio" class="btn-check" id="color-red1" name="color" value="Red">
                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-red1"> <i class="bx bxs-circle fs-18 text-danger"></i></label>
                                             
                                         </div>

@@ -11,7 +11,7 @@ module.exports = {
       },
       userId: {  // Foreign key for User
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'users',
           key: 'id'
@@ -92,7 +92,7 @@ module.exports = {
       },
       createdBy: {
         type: DataTypes.INTEGER, // or Sequelize.STRING depending on your user ID type
-        allowNull: false, // Ensures that createdBy cannot be null
+        allowNull: true, // Ensures that createdBy cannot be null
         references: {
           model: 'Users', // name of the target model
           key: 'id',      // key in the target model

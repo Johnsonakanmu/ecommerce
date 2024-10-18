@@ -158,6 +158,42 @@
 </script>
 
 
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent form submission
+  
+    // Get password and confirm password values
+    const password = document.getElementById('password').value;
+    const crfpassword = document.getElementById('crfpassword').value;
+  
+    // Clear previous error messages
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('confirmPasswordError').textContent = '';
+  
+    // Validation
+    let isValid = true;
+  
+    // Check password length
+    if (password.length < 4) {
+      document.getElementById('passwordError').textContent = 'Password must be at least 4 characters long';
+      isValid = false;
+    }
+  
+    // Check if passwords match
+    if (password !== crfpassword) {
+      document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+      isValid = false;
+    }
+  
+    // If valid, submit form
+    if (isValid) {
+      document.querySelector('form').submit();
+    }
+  });
+  </script>
+  
+
+
 <!-- <script>
   document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault(); // Prevent default form submission

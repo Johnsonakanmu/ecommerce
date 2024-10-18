@@ -28,7 +28,7 @@ app.use(cors());
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_default_secret_key', // Use environment variable
-  saveUninitialized: false, // Do not save uninitialized sessions
+  saveUninitialized: true, 
   resave: false, // Only save sessions that have been modified
   cookie: { 
       secure: process.env.NODE_ENV === 'production', // Secure cookies in production
@@ -56,13 +56,11 @@ app.use((req, res, next)=>{
           return next();    // Proceed to the next middleware
         }
       }
-      if (!req.session.visited) {
-        req.session.visited = true;  // Mark the session as initialized or modified
-      }
+      // if (!req.session.visited) {
+      //   req.session.visited = true;  // Mark the session as initialized or modified
+      // }
      
-      if (!req.session.visited) {
-        req.session.visited = true;  // Mark the session as initialized or modified
-      }
+      
 
       next();
     } catch (err) {
@@ -71,12 +69,6 @@ app.use((req, res, next)=>{
     }
   });
   
-  
-  
-  
-  
-  
-
 
 app.use(express.static('uploads'))
 

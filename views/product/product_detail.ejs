@@ -81,39 +81,48 @@
                                   <div class="col-lg-3">
                                        <div class="">
                                             <h5 class="text-dark fw-medium">Colors > <span class="text-muted">Dark</span></h5>
-                                            <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
-                                                 <input type="checkbox" class="btn-check" id="color-dark2" checked <%= (product.color || []).includes('Dark') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark2"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
-    
-                                                 <input type="checkbox" class="btn-check" id="color-yellow2" <%= (product.color || []).includes('Yellow') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow2"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
-    
-                                                 <input type="checkbox" class="btn-check" id="color-white2" <%= (product.color || []).includes('White') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white2"> <i class="bx bxs-circle fs-18 text-white"></i></label>
-    
-                                                 <input type="checkbox" class="btn-check" id="color-green2" <%= (product.color || []).includes('Red') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-green2"> <i class="bx bxs-circle fs-18 text-success"></i></label>
-    
-                                            </div>
+                                            <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic radio toggle button group">
+                                             <input type="radio" class="btn-check" id="color-dark1" name="color" value="Dark" <%= products.color === 'Dark' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-dark1">
+                                                 <i class="bx bxs-circle fs-18 text-dark"></i>
+                                             </label>
+                                         
+                                             <input type="radio" class="btn-check" id="color-yellow1" name="color" value="Yellow" <%= products.color === 'Yellow' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-yellow1">
+                                                 <i class="bx bxs-circle fs-18 text-warning"></i>
+                                             </label>
+                                         
+                                             <input type="radio" class="btn-check" id="color-white1" name="color" value="White" <%= products.color === 'White' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-white1">
+                                                 <i class="bx bxs-circle fs-18 text-white"></i>
+                                             </label>
+                                         
+                                             <input type="radio" class="btn-check" id="color-red1" name="color" value="Red" <%= products.color === 'Red' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="color-red1">
+                                                 <i class="bx bxs-circle fs-18 text-danger"></i>
+                                             </label>
+                                         </div>
                                        </div>
                                   </div>
                                   <div class="col-lg-3">
                                        <div class="">
                                             <h5 class="text-dark fw-medium">Size > <span class="text-muted">M</span></h5>
-                                            <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic checkbox toggle button group">
-                                                 <input type="checkbox" class="btn-check" id="size-s2" <%= (product.size || []).includes('S') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s2">S</label>
-    
-                                                 <input type="checkbox" class="btn-check" id="size-m2" checked <%= (product.size || []).includes('M') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m2">M</label>
-    
-                                                 <input type="checkbox" class="btn-check" id="size-xl3" <%= (product.size || []).includes('XL') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl3">Xl</label>
-    
-                                                 <input type="checkbox" class="btn-check" id="size-xxl3" <%= (product.size || []).includes('XXL') ? 'checked' : '' %>>
-                                                 <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl3">XXL</label>
-    
-                                            </div>
+                                            <div class="d-flex flex-wrap gap-2" role="group" aria-label="Basic radio toggle button group">
+                                             <input type="radio" class="btn-check" id="size-xs1" name="size" value="XS" <%= products.size === 'XS' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xs1">XS</label>
+                                         
+                                             <input type="radio" class="btn-check" id="size-s1" name="size" value="S" <%= products.size === 'S' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-s1">S</label>
+                                         
+                                             <input type="radio" class="btn-check" id="size-m1" name="size" value="M" <%= products.size === 'M' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-m1">M</label>
+                                         
+                                             <input type="radio" class="btn-check" id="size-xl1" name="size" value="XL" <%= products.size === 'XL' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xl1">XL</label>
+                                         
+                                             <input type="radio" class="btn-check" id="size-xxl1" name="size" value="XXL" <%= products.size === 'XXL' ? 'checked' : '' %>>
+                                             <label class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center" for="size-xxl1">XXL</label>
+                                         </div>
                                        </div>
                                   </div>
                              </div>

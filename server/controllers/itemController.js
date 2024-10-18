@@ -2,9 +2,7 @@ const {Product, Cart, CartItem, User, Order, OrderItem, ShippingDetail } = requi
 const { Sequelize } = require('sequelize'); 
 const { v4: uuidv4 } = require('uuid');  // For generating unique order numbers
 const { calculateCartTotals } = require('../../utils/cartUtils')
-const { Op } = require('sequelize'); // Make sure to import Op from Sequelize
-const { associateProductWithUser} = require('../../utils/productWithUser')
-
+const bcrypt = require('bcryptjs')
 
 exports.itemsList = async (req, res, next) => {
     try {
@@ -87,7 +85,7 @@ exports.searchItem = async (req, res) => {
 
 
 
-exports.postCart = async (req, res) => {
+exports.addTotCart = async (req, res) => {
   const productId = req.params.productId;
   const userId = req.user?req.user.id:null; // Get the userId from the session
   const sessionId = req.sessionID; // Get the session ID from the request
@@ -95,7 +93,6 @@ exports.postCart = async (req, res) => {
 
   try {
     const whereCondition = userId  ? { userId: userId }  : { sessionId: sessionId }; 
-     console.log('my Session', sessionId)
     let cart = await Cart.findOne({
       where: whereCondition,
     });
@@ -111,7 +108,6 @@ exports.postCart = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    console.log("Product Details:", product); // Debug the product object
 
     // Step 3: Calculate Price, Discount, and Tax
     const originalPrice = parseFloat(product.price); // Get original price
@@ -276,10 +272,6 @@ exports.deleteCartItem = async (req, res, next) => {
 };
 
 
-
-
-
-
 exports.getAccount = async (req, res, next) => {
   try {
     const user_or_session_id = req.user?req.user.id:req.sessionID;
@@ -298,15 +290,16 @@ exports.getAccount = async (req, res, next) => {
     res.render('items/create_account', {
       title: "Items List | Order Your Jersey",
       showSidebar: false,
-      message, // Pass the session message to the template
-
+      message: req.session.message || null, // Pass session message
+       type: req.session.message?.type || null, // Pass the type (success or danger)
+       
       subtotal: subtotal.toFixed(2),
       totalDiscount: totalDiscount.toFixed(2),
       totalTax: totalTax.toFixed(2),
       total: subtotal.toFixed(2), // If total is just subtotal in this case
       estimatedDeliveryDate,
     });
-    
+    req.session.message = null; // Clear the session message after rendering
   } catch (error) {
     console.error("Error fetching cart details:", error);
     next(error);
@@ -314,32 +307,71 @@ exports.getAccount = async (req, res, next) => {
 };
 
 
-
 exports.createAccount = async (req, res, next) => {
-  const { firstName, lastName, email, phone } = req.body;
+  const { fullName, email, phone, password, crfpassword } = req.body;
+
+  // Check if password and confirm password match
+  if (!password || !crfpassword || password !== crfpassword) {
+    req.session.message = {
+      type: 'danger',
+      message: 'Passwords do not match or are missing',
+    };
+    return res.redirect('/create_account');
+  }
+
+    // Server-side password length validation
+    if (password.length < 4) {
+      req.session.message = {
+        type: 'danger',
+        message: 'Password must be at least 4 characters long',
+      };
+      return res.redirect('/create_account');
+    }
 
   try {
-    // Check if user exists otherwise create new
+    // Encrypt the password
+    const saltRounds = 10;
+    const encryptedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Check if the user exists, otherwise create a new user
     const existingUser = await User.findOne({ where: { email } });
-    const currentUser = existingUser? existingUser: await User.create({firstName,lastName,email,phone,password});
+    const currentUser = existingUser 
+      ? existingUser 
+      : await User.create({
+          fullName,
+          email,
+          phone,
+          password: encryptedPassword,
+        });
+
+    // Create shipping details
     await ShippingDetail.create({
       userId: currentUser.id,
-      address,
-      state,
-      city,
-      postal_code,
-      country
+      address: req.body.address,
+      state: req.body.state,
+      city: req.body.city,
+      postal_code: req.body.postal_code,
+      country: req.body.country,
     });
-    await Cart.updateUserIdBySessionId(sessionId, currentUser.id);
-   req.session.user= currentUser
-   req.session.userId= currentUser.id
+
+    // Update the cart with the user's ID
+    await Cart.updateUserIdBySessionId(req.session.id, currentUser.id);
+
+    // Save the user and userId to session
+    req.session.user = currentUser;
+    req.session.userId = currentUser.id;
+
+    
+    // Set success message and redirect to shipping details page
     req.session.message = {
       type: 'success',
       message: 'Account created successfully',
     };
-    res.redirect('/checkout');
+    res.redirect('/confirmation_page');
   } catch (err) {
     console.error("Error in account creation/updating:", err);
+
+    // Handle the error and redirect back to create account page
     req.session.message = {
       type: 'danger',
       message: err.message,
@@ -347,15 +379,6 @@ exports.createAccount = async (req, res, next) => {
     res.redirect('/checkout');
   }
 };
-
-
-
-
-
-
-
-
-
 
 
 
@@ -387,6 +410,94 @@ exports.getShippingDetails = async (req, res, next) => {
     next(error);
   }
 }
+
+
+
+
+// Controller to render the confirmation page
+exports.getConfirmation = async (req, res, next) => {
+  try {
+    const userId = req.session.userId;
+
+    // Fetch the user details
+    const user = await User.findByPk(userId);
+
+    // Fetch shipping details for the user
+    const shippingDetails = await ShippingDetail.findOne({ where: { userId } });
+
+    // Fetch the cart items for the user with all related products
+    const cartItems = await CartItem.findAll({
+      where: { userId },
+      include: [{
+        model: Product,
+        as: 'product',
+      }],
+    });
+
+    // Initialize totals
+    let subtotal = 0;
+    let totalDiscount = 0;
+
+    const products = [];
+
+    for (const item of cartItems) {
+      const product = item.product;
+
+      if (!product) {
+        console.warn('No product found for cart item:', item);
+        continue;
+      }
+
+      const originalPrice = parseFloat(product.price) || 0;
+      const discount = parseFloat(product.discount || 0);
+      const quantity = parseInt(item.quantity, 10) || 0;
+      const taxPerUnit = parseFloat(product.tax || 0);
+
+      // Calculate per-product amounts
+      const totalTax = taxPerUnit * quantity;
+      const totalDiscountPerProduct = discount * quantity;
+      const totalPricePerProduct = (originalPrice + taxPerUnit) * quantity;
+
+      // Accumulate totals
+      subtotal += totalPricePerProduct;
+      totalDiscount += totalDiscountPerProduct;
+
+      products.push({
+        productName: product.productName,
+        quantity,
+        price: originalPrice,
+        tax: totalTax,
+        discount: totalDiscountPerProduct,
+        total: totalPricePerProduct,
+        imageUrl: product.imageUrl,
+        size: product.size,
+      });
+    }
+
+    const grandTotal = subtotal - totalDiscount;
+
+    res.render('items/confirmation_page', {
+      user,
+      shippingDetails,
+      products,
+      subtotal,
+      discount: totalDiscount,
+      grandTotal,
+      showSidebar: false,
+    });
+  } catch (err) {
+    console.error("Error fetching confirmation details:", err);
+    req.session.message = {
+      type: 'danger',
+      message: 'Could not fetch confirmation details.',
+    };
+    res.redirect('/create_account');  // Or wherever you want to redirect
+  }
+};
+
+
+
+
 
 
 
@@ -423,7 +534,7 @@ exports.getOrder = async (req, res, next) => {
   }
 };
 
-exports.post('/verify-payment', async (req, res) => {
+exports.verifyPayments = async (req, res) => {
   const { reference, totalAmount } = req.body;
 
   try {
@@ -447,7 +558,7 @@ exports.post('/verify-payment', async (req, res) => {
     console.error('Error verifying payment:', error);
     res.status(500).json({ status: 'error', message: 'Error during payment verification' });
   }
-});
+};
 
 exports.verifyPayment = async (req, res, next) => {
   const { reference } = req.body;
@@ -474,6 +585,7 @@ exports.verifyPayment = async (req, res, next) => {
     res.status(500).json({ status: 'error', message: 'Error during payment verification' });
   }
 };
+
 
 exports.createOrder = async (req, res, next) => {
   const userId = req.session.userId;

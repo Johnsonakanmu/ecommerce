@@ -116,7 +116,7 @@ exports.loginPages = async (req, res) => {
 
 exports.signupPage = async (req, res, next) => {
   console.log(req.body); // Log request body for debugging
-  const { firstName, lastName, email, password } = req.body;
+  const { fullName, email, password } = req.body;
 
   try {
     // Normalize email to lower case
@@ -148,8 +148,7 @@ exports.signupPage = async (req, res, next) => {
 
     // Step 4: Create a new user WITHOUT the createdBy field
     const newUser = await User.create({
-      firstName,
-      lastName,
+      fullName,
       email: normalizedEmail,
       password: encryptedPassword,
     });
@@ -158,11 +157,11 @@ exports.signupPage = async (req, res, next) => {
     req.session.userId = newUser.id;
 
     // Step 6: Return a success response, excluding the password
-    const { firstName: userFirstName, lastName: userLastName, email: userEmail } = newUser;
+    const {fullName: usefullName,  email: userEmail } = newUser;
 
     return res.status(201).json({
       message: 'New user created successfully',
-      user: { firstName: userFirstName, lastName: userLastName, email: userEmail },
+      user: { fullName: usefullName, email: userEmail },
     });
 
   } catch (error) {
