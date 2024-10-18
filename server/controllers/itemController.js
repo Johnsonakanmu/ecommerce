@@ -93,6 +93,7 @@ exports.addTotCart = async (req, res) => {
 
   try {
     const whereCondition = userId  ? { userId: userId }  : { sessionId: sessionId }; 
+     console.log('my Session', sessionId)
     let cart = await Cart.findOne({
       where: whereCondition,
     });
@@ -108,6 +109,7 @@ exports.addTotCart = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    console.log("Product Details:", product); // Debug the product object
 
     // Step 3: Calculate Price, Discount, and Tax
     const originalPrice = parseFloat(product.price); // Get original price
@@ -308,70 +310,107 @@ exports.getAccount = async (req, res, next) => {
 
 
 exports.createAccount = async (req, res, next) => {
-  const { fullName, email, phone, password, crfpassword } = req.body;
+  const { fullName, email, phone, password, crfpassword, address, state, city, postal_code, country } = req.body;
 
-  // Check if password and confirm password match
-  if (!password || !crfpassword || password !== crfpassword) {
-    req.session.message = {
-      type: 'danger',
-      message: 'Passwords do not match or are missing',
-    };
-    return res.redirect('/create_account');
-  }
-
-    // Server-side password length validation
-    if (password.length < 4) {
-      req.session.message = {
-        type: 'danger',
-        message: 'Password must be at least 4 characters long',
-      };
-      return res.redirect('/create_account');
-    }
+  let currentUser; // Define currentUser here
 
   try {
-    // Encrypt the password
-    const saltRounds = 10;
-    const encryptedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Check if the user exists, otherwise create a new user
+    // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
-    const currentUser = existingUser 
-      ? existingUser 
-      : await User.create({
-          fullName,
-          email,
-          phone,
-          password: encryptedPassword,
-        });
+    
+    if (existingUser) {
+      // If the user exists, allow updating their account
+      // Password checks and updates are optional
+      if (password || crfpassword) {
+        // Check if password and confirm password match
+        if (!password || !crfpassword || password !== crfpassword) {
+          req.session.message = {
+            type: 'danger',
+            message: 'Passwords do not match or are missing',
+          };
+          return res.redirect('/create_account');
+        }
 
-    // Create shipping details
-    await ShippingDetail.create({
-      userId: currentUser.id,
-      address: req.body.address,
-      state: req.body.state,
-      city: req.body.city,
-      postal_code: req.body.postal_code,
-      country: req.body.country,
+        // Server-side password length validation
+        if (password.length < 4) {
+          req.session.message = {
+            type: 'danger',
+            message: 'Password must be at least 4 characters long',
+          };
+          return res.redirect('/create_account');
+        }
+
+        // Encrypt the new password
+        const saltRounds = 10;
+        const encryptedPassword = await bcrypt.hash(password, saltRounds);
+        existingUser.password = encryptedPassword; // Update the password
+      }
+
+      // Update other user details
+      existingUser.fullName = fullName;
+      existingUser.phone = phone;
+      await existingUser.save(); // Save updated user details
+
+      currentUser = existingUser; // Assign existing user to currentUser
+
+    } else {
+      // Create a new user if no existing user found
+      // Validate password if creating a new account
+      if (!password || !crfpassword || password !== crfpassword) {
+        req.session.message = {
+          type: 'danger',
+          message: 'Passwords do not match or are missing',
+        };
+        return res.redirect('/create_account');
+      }
+
+      // Server-side password length validation
+      if (password.length < 4) {
+        req.session.message = {
+          type: 'danger',
+          message: 'Password must be at least 4 characters long',
+        };
+        return res.redirect('/create_account');
+      }
+
+      // Encrypt the password
+      const saltRounds = 10;
+      const encryptedPassword = await bcrypt.hash(password, saltRounds);
+
+      // Create a new user
+      currentUser = await User.create({
+        fullName,
+        email,
+        phone,
+        password: encryptedPassword,
+      });
+
+      // Save user ID to session
+      req.session.user = currentUser;
+      req.session.userId = currentUser.id;
+    }
+
+    // Create or update shipping details
+    await ShippingDetail.upsert({
+      userId: currentUser.id, // Use currentUser here
+      address,
+      state,
+      city,
+      postal_code,
+      country,
     });
 
     // Update the cart with the user's ID
-    await Cart.updateUserIdBySessionId(req.session.id, currentUser.id);
+    await Cart.updateUserIdBySessionId(req.session.id, currentUser.id); // Use currentUser here
 
-    // Save the user and userId to session
-    req.session.user = currentUser;
-    req.session.userId = currentUser.id;
-
-    
-    // Set success message and redirect to shipping details page
+    // Set success message and redirect to confirmation page
     req.session.message = {
       type: 'success',
-      message: 'Account created successfully',
+      message: 'Account updated successfully' + (existingUser ? '' : ' and created successfully'),
     };
     res.redirect('/confirmation_page');
   } catch (err) {
     console.error("Error in account creation/updating:", err);
-
-    // Handle the error and redirect back to create account page
     req.session.message = {
       type: 'danger',
       message: err.message,
@@ -379,6 +418,8 @@ exports.createAccount = async (req, res, next) => {
     res.redirect('/checkout');
   }
 };
+
+
 
 
 
@@ -425,9 +466,15 @@ exports.getConfirmation = async (req, res, next) => {
     // Fetch shipping details for the user
     const shippingDetails = await ShippingDetail.findOne({ where: { userId } });
 
-    // Fetch the cart items for the user with all related products
+    // Fetch the user's cart (assumes user has a cart)
+    const cart = await Cart.findOne({ where: { userId } });
+    if (!cart) {
+      throw new Error('No cart found for the user');
+    }
+
+    // Fetch the cart items for the cart
     const cartItems = await CartItem.findAll({
-      where: { userId },
+      where: { cartId: cart.id },
       include: [{
         model: Product,
         as: 'product',
@@ -491,9 +538,64 @@ exports.getConfirmation = async (req, res, next) => {
       type: 'danger',
       message: 'Could not fetch confirmation details.',
     };
-    res.redirect('/create_account');  // Or wherever you want to redirect
+    res.redirect('/create_account');
   }
 };
+
+
+exports.editCreateAccount = async (req, res, next) => {
+  const userId = req.session.userId;
+  console.log("Edit Account Called. UserID:", userId); // Debugging line
+
+  try {
+    // Fetch the user details
+    const user = await User.findByPk(userId);
+    console.log("Fetched User:", user); // Debugging line
+
+    if (!user) {
+      req.session.message = {
+        type: 'danger',
+        message: 'User not found.',
+      };
+      return res.redirect('/create_account');
+    }
+
+    // Fetch shipping details
+    const shippingDetails = await ShippingDetail.findOne({ where: { userId } });
+
+    // Get cart totals
+    const { subtotal, totalDiscount, totalTax } = await calculateCartTotals(userId);
+
+    // Define estimated delivery date
+    const estimatedDeliveryDate = 'October 10, 2024'; // Adjust as necessary
+
+    // Clear the session message
+    const message = req.session.message || null;
+    req.session.message = null;
+
+    // Render the view
+    res.render('items/create_account', {
+      user,
+      shippingDetails,
+      message,
+      showSidebar: false,
+      type: message?.type || null,
+      subtotal: subtotal.toFixed(2),
+      totalDiscount: totalDiscount.toFixed(2),
+      totalTax: totalTax.toFixed(2),
+      total: (subtotal - totalDiscount + totalTax).toFixed(2),
+      estimatedDeliveryDate,
+    });
+  } catch (error) {
+    console.error("Error fetching user or cart details:", error);
+    req.session.message = {
+      type: 'danger',
+      message: 'Error retrieving user details.',
+    };
+    res.redirect('/create_account');
+  }
+};
+
 
 
 
@@ -585,7 +687,6 @@ exports.verifyPayment = async (req, res, next) => {
     res.status(500).json({ status: 'error', message: 'Error during payment verification' });
   }
 };
-
 
 exports.createOrder = async (req, res, next) => {
   const userId = req.session.userId;

@@ -12,6 +12,8 @@ router.post('/checkout', itemController.createOrder);
 
 router.get('/create_account', itemController.getAccount);
 router.post('/create_account', itemController.createAccount);
+router.get('/edit_account', itemController.editCreateAccount);
+
 
 router.get('/shipping_details', itemController.getShippingDetails);
 
