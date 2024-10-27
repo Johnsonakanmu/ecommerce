@@ -11,7 +11,7 @@
             </div>
 
 
-            <h2 class="fw-bold fs-24">Create Account</h2>
+            <h2 class="fw-bold fs-24">Sign Up</h2>
             <p class="text-muted mt-1 mb-4">Welcome to the user creation process! Please fill out the required fields to set up your account.</p>
 
             <% if (message) { %>
@@ -26,14 +26,14 @@
                 <div class="row">
                   <div class="col-md-12 mb-2">
                     <label class="form-label" for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter Full Name" required value="<%= typeof user !== 'undefined' && user ? user.fullName : '' %>">
+                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Full Name:" required value="<%= typeof user !== 'undefined' && user ? user.fullName : '' %>">
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-12 mb-2">
                     <label class="form-label" for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" 
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Email:" 
                     required value="<%= typeof user !== 'undefined' && user ? user.email : '' %>">
                   </div>
                 </div>
@@ -41,12 +41,12 @@
                 <div class="row">
                   <div class="col-md-6 mb-2">
                     <label class="form-label" for="phone">Phone</label>
-                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter your phone no:" 
+                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone No:" 
                     required value="<%= typeof user !== 'undefined' && user ? user.phone : '' %>">
                   </div>
                   <div class="col-md-6 mb-2">
                     <label class="form-label" for="state">State</label>
-                    <input type="text" id="state" name="state" class="form-control" placeholder="Enter your State:" 
+                    <input type="text" id="state" name="state" class="form-control" placeholder="State:" 
                     required value="<%= typeof shippingDetails !== 'undefined' && shippingDetails ? shippingDetails.state : '' %>">
                   </div>
                 </div>
@@ -54,56 +54,62 @@
                 <div class="row">
                   <div class="col-md-6 mb-2">
                     <label class="form-label" for="city">City</label>
-                    <input type="text" id="city" name="city" class="form-control" placeholder="Enter your city" 
+                    <input type="text" id="city" name="city" class="form-control" placeholder="City:" 
                     required value="<%= typeof shippingDetails !== 'undefined' && shippingDetails ? shippingDetails.city : '' %>">
                   </div>
                   <div class="col-md-6 mb-2">
-                    <label class="form-label" for="postal_code">Postal Code</label>
-                    <input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="Enter Postal Code:"
-                     required value="<%= typeof shippingDetails !== 'undefined' && shippingDetails ? shippingDetails.postal_code : '' %>">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password:"
-                    >
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label" for="crfpassword">Confirm Password</label>
-                    <input type="password" id="crfpassword" name="crfpassword" class="form-control" placeholder="Enter your Confirm Password:">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-12 mb-2">
                     <label class="form-label" for="country">Country</label>
-                    <input type="text" id="country" name="country" class="form-control" placeholder="Enter Country" 
+                    <input type="text" id="country" name="country" class="form-control" placeholder="Country:" 
                     required value="<%= typeof shippingDetails !== 'undefined' && shippingDetails ? shippingDetails.country : '' %>">
                   </div>
                 </div>
 
                 <div class="row">
+                  <div class="col-md-6 mb-2">
+                    <!-- Password input -->
+                    <label class="form-label" for="password">Password</label>
+                     <input type="password" name="password" class="form-control" placeholder="Password:">
+                     <% if (typeof errors !== 'undefined' && errors.passwordLength) { %>
+                      <div class="error-message"><%= errors.passwordLength %></div>
+                   <% } %>
+                  </div>
+                  <div class="col-md-6 mb-2">
+                    <!-- Confirm Password input -->
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" name="crfpassword" class="form-control" placeholder="Confirm Password:">
+                    <% if (typeof errors !== 'undefined' && errors.confirmPassword) { %>
+                        <div class="error-message"><%= errors.confirmPassword %></div>
+                    <% } %>
+                </div>
+                </div>
+
+                <div class="row">
                   <div class="col-md-12 mb-2">
                     <label class="form-label" for="address">Address</label>
-                    <input type="text" id="address" name="address" class="form-control" placeholder="Enter Address" required
+                    <input type="text" id="address" name="address" class="form-control" placeholder="Address:" required
                     value="<%= typeof shippingDetails !== 'undefined' && shippingDetails ? shippingDetails.address : '' %>" 
                     >
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-md-6 mb-2">
-                    <a href="/cart" class="btn btn-outline-secondary width-xl">Back</a>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <button class="btn btn-soft-primary" type="submit">Create Account</button>
+                  <!-- <div class="col-md-6 mb-2">
+                    <a href="/login" class="btn btn-outline-secondary width-xl">Login</a>
+                  </div> -->
+                  <div class="col-md-12 mb-2">
+                    <button class="btn btn-soft-primary" style="width: 100%;" type="submit">Create Account</button>
                   </div>
                 </div>
-
+                  <!-- Display general error if it exists -->
+                  <!-- General error display -->
+                  <% if (typeof errors !== 'undefined' && errors.general) { %>
+                   <div class="error-message"><%= errors.general %></div>
+                    <% } %>
               </form>
             </div>
+
+            <p class=" text-danger text-center" style="margin-top: -50px;">I already have an account  <a href="login" class="text-dark fw-bold ms-1">Sign In</a></p>
+
           </div>
         </div>
       </div>
@@ -139,7 +145,7 @@
                   <td class="px-0">
                     <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:clipboard-text-broken"></iconify-icon> Sub Total:</p>
                   </td>
-                  <td class="text-end text-dark fw-medium px-0">$<%= subtotal || '0.00' %></td>
+                  <td class="text-end text-dark fw-medium px-0">#<%= subtotal || '0.00' %></td>
                 </tr>
               </tbody>
             </table>
@@ -151,7 +157,7 @@
               <p class="fw-medium text-dark mb-0">Total Amount</p>
             </div>
             <div>
-              <p class="fw-medium text-dark mb-0"><%= subtotal || '0.00' %></p>
+              <p class="fw-medium text-dark mb-0">#<%= subtotal || '0.00' %></p>
             </div>
           </div>
           <div class="alert alert-warning alert-icon mt-3 mb-0" role="alert">

@@ -11,6 +11,7 @@ module.exports = {
       },
       cartId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         references: {
           model: 'carts',
           key: 'id',
@@ -26,6 +27,7 @@ module.exports = {
       },
       productId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         references: {
           model: 'products',
           key: 'id',

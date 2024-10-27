@@ -1,6 +1,8 @@
 const {User} = require('../../models/index')
 const bcrypt = require("bcryptjs");
 const jwt= require('jsonwebtoken')
+const {Cart} = require('../../models/index')
+
 const validatePassword = (password) => {
   // Ensure the password is at least 8 characters long and contains a mix of letters, numbers, and symbols
   const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
@@ -8,58 +10,58 @@ const validatePassword = (password) => {
 };
 
 
-exports.loginPage = (req, res, next)=>{
-    res.render('auth/login', {title: "Login Page | Order Your Jersey",  showSidebar: false });
-}
+// exports.loginPage = (req, res, next)=>{
+//     res.render('auth/login', {title: "Login Page | Order Your Jersey",  showSidebar: false });
+// }
 
 
-exports.loginPages = async (req, res) => {
-  const { email, password } = req.body;
+// // exports.loginPages = async (req, res) => {
+//   const { email, password } = req.body;
 
-  try {
-    // Step 1: Check if the user exists in the database
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials: User not found' });
-    }
+//   try {
+//     // Step 1: Check if the user exists in the database
+//     const user = await User.findOne({ where: { email } });
+//     if (!user) {
+//       return res.status(401).json({ message: 'Invalid credentials: User not found' });
+//     }
 
-    // Step 2: Compare the password using bcrypt
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials: Incorrect password' });
-    }
+//     // Step 2: Compare the password using bcrypt
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(401).json({ message: 'Invalid credentials: Incorrect password' });
+//     }
 
-    // Step 3: Generate a JWT token
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        isAdmin: user.isAdmin,
-      },
-      process.env.JWT_SEC,
-      { expiresIn: '1d' }
-    );
+//     // Step 3: Generate a JWT token
+//     const accessToken = jwt.sign(
+//       {
+//         id: user.id,
+//         isAdmin: user.isAdmin,
+//       },
+//       process.env.JWT_SEC,
+//       { expiresIn: '1d' }
+//     );
 
-    // Step 4: Store the token in a cookie
-    res.cookie('authToken', accessToken, { httpOnly: true, secure: false }); // Use secure: true in production with HTTPS
+//     // Step 4: Store the token in a cookie
+//     res.cookie('authToken', accessToken, { httpOnly: true, secure: false }); // Use secure: true in production with HTTPS
 
-    // Step 5: Store the user ID in the session for session-based management
-    req.session.userId = user.id; // Store the user ID in the session
+//     // Step 5: Store the user ID in the session for session-based management
+//     req.session.userId = user.id; // Store the user ID in the session
 
-    return res.status(200).json({
-      message: 'Login successful',
-      user: {
-        id: user.id,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        accessToken,
-      },
-    });
+//     return res.status(200).json({
+//       message: 'Login successful',
+//       user: {
+//         id: user.id,
+//         email: user.email,
+//         isAdmin: user.isAdmin,
+//         accessToken,
+//       },
+//     });
 
-  } catch (error) {
-    console.error('Error during login:', error);
-    return res.status(500).json({ message: 'An error occurred during login' });
-  }
-};
+//   } catch (error) {
+//     console.error('Error during login:', error);
+//     return res.status(500).json({ message: 'An error occurred during login' });
+//   }
+// };
 
 
 
@@ -176,3 +178,78 @@ exports.signupPage = async (req, res, next) => {
 exports.resetPassword = (req, res, next)=>{
     res.render('auth/reset_password', {title: "Reset Password | Order Your Jersey" , showSidebar: false });
 }
+
+
+
+
+// Login function
+
+
+exports.getLoginAccount = (req, res, next)=>{
+  res.render('auth/login', {
+      title: "Login Page | Order Your Jersey",  
+      errors: {},  
+       email: '',
+      showSidebar: false 
+    });
+}
+exports.loginAccount = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+
+     // Retrieve cart items by session ID
+     const cartItems = await Cart.getItemsBySessionId(req.sessionID);
+
+    // Find the user by email
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      // If user not found, return specific error
+      return res.render('auth/login', {
+        errors: { general: 'You have not created an account or your email is not found in the database.' },
+        email,
+        showSidebar: false,
+      });
+    }
+
+    // Check if the password matches
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      // If password doesn't match, return error
+      return res.render('auth/login', {
+        errors: { password: 'Incorrect password' },
+        email,
+        showSidebar: false,
+      });
+    }
+
+    if (cartItems.length === 0) {
+      return res.render('auth/login', {
+        errors: { cart: 'No items found in the cart' },
+        email,
+        showSidebar: false,
+      });
+    }
+
+    // Set user session after successful login
+    req.session.user = user;
+    req.session.userId = user.id;
+
+    // Update the cart with the user's ID
+    await Cart.updateUserIdBySessionId(req.sessionID, user.id);
+
+    // Redirect to payment page after login
+    return res.redirect('/confirmation_page');
+  } catch (err) {
+    console.error('Error during login:', err);
+    res.render('auth/login', {
+      errors: { general: 'An error occurred. Please try again.' },
+      email,
+      showSidebar: false,
+    });
+  }
+};
+
+

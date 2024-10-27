@@ -71,11 +71,7 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      soldAmount: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: 0
-      },
+      
       sellingPrice: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -90,6 +86,11 @@ module.exports = {
         allowNull: true,
         defaultValue: true,      // Set a default value of false
       },
+      quantitySold: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0 // Initialize to zero
+    },
       createdBy: {
         type: DataTypes.INTEGER, // or Sequelize.STRING depending on your user ID type
         allowNull: true, // Ensures that createdBy cannot be null

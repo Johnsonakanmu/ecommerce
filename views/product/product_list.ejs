@@ -8,9 +8,6 @@
                         <h4 class="card-title flex-grow-1">All Product List</h4>
                         <a href="/add_product" class="btn btn-sm btn-primary">Add Product</a>
                         <div class="dropdown">
-                            <a href="#" class="dropdown-toggle btn btn-sm btn-outline-light" data-bs-toggle="dropdown" aria-expanded="false">
-                                This Month
-                            </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a href="#!" class="dropdown-item">Download</a>
                                 <a href="#!" class="dropdown-item">Export</a>
@@ -33,6 +30,8 @@
                                             <th>Product Name & Size</th>
                                             <th>Price</th>
                                             <th>Stock</th>
+                                            <th>Selling Price</th>
+                                            <th>Category</th>
                                             <th>Rating</th>
                                             <!-- <th>CreatedBy</th> -->
                                             <th>Action</th>
@@ -58,26 +57,30 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>$<%= row.price %></td>
+                                                <td>#<%= row.price %></td>
                                                 <td>
-                                                    <p class="mb-1 text-muted"><span class="text-dark fw-medium"><%= row.quantity - (row.soldAmount || 0) %> Item(s)</span> Left</p>
-                                                    <p class="mb-0 text-muted"><%= row.soldAmount || 0 %> Sold</p>
-                                                    <!-- Hidden form to update sold amount -->
-                                                    <form id="updateSoldForm<%= row.id %>" action="/updateSoldAmount/<%= row.id %>" method="POST" style="display: none;">
-                                                        <input type="number" name="soldAmount" value="1" min="1"> <!-- Default value; adjust as needed -->
-                                                        <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
-                                                    </form>
+                                                    <p class="mb-1 text-muted">
+                                                        <span class="text-dark fw-medium">
+                                                            <%= row.quantity - (row.quantitySold || 0) %> Item(s) Left
+                                                        </span>
+                                                    </p>
+                                                    <p class="mb-0 text-muted">
+                                                        <%= row.quantitySold || 0 %> Sold
+                                                    </p>
                                                 </td>
+                                                <td><%= row.sellingPrice %></td>
+                                                <td><%= row.productCategories %></td>
                                                 <td>
                                                     <span class="badge p-1 bg-light text-dark fs-12 me-1">
                                                         <i class="bx bxs-star align-text-top fs-14 text-warning me-1"></i>
-                                                    </span> 4.5 Review
+                                                        <i class="bx" id="star-2"></i>
+                                                        <i class="bx" id="star-3"></i>
+                                                        <i class="bx" id="star-4"></i>
+                                                        <i class="bx" id="star-5"></i>
+                                                    </span> 
+                                                    <span id="rating-score">4.5</span> Review
                                                 </td>
-                                                <!-- <td>
-                                                    <a href="#!" class="text-dark fw-medium fs-15">
-                                                        <p><%= row.creator ? row.creator.name : 'Unknown' %></p>
-                                                    </a>
-                                                </td> -->
+                                               
                                                 
                                                 <td>
                                                     <div class="d-flex gap-2">

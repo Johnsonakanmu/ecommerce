@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('orderItems', {
+    await queryInterface.createTable('orderItems', 'cartId', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,7 +27,7 @@ module.exports = {
       },
       cartId: {
         type: DataTypes.INTEGER, // Should match the type of User's primary key
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'carts',
           key: 'id'
@@ -89,6 +89,6 @@ module.exports = {
     });
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable('orderItems');
+    await queryInterface.dropTable('orderItems', 'cartId',);
   }
 };

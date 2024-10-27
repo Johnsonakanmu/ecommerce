@@ -1,4 +1,13 @@
 <div class="page-content"  style="margin: 40px auto;">
+<section>
+    <!-- Hidden input to store the total amount -->
+<input type="hidden" id="totalAmount" value="<%= grandTotal %>" />
+<!-- Hidden input to store the user's email -->
+<input type="hidden" id="userEmail" value="<%= user.email %>" />
+<!-- Hidden input for the Paystack public key -->
+<input type="hidden" id="paystackPublicKey" value="pk_test_f5de9f32c2b42f111f247a7adb81b644c2262d66" />
+
+</section>
 
     <!-- Start Container Fluid -->
     <div class="container-xxl">
@@ -18,7 +27,7 @@
                                     <address class="mt-3 mb-0">
                                         Km 10, off Akala Road, Elowura, <br>
                                         Ibadan, Oyo State, Nigeria. <br>
-                                        <abbr title="Phone">Phone:</abbr> + 234 9024837647
+                                        <abbr title="Phone">Phone: </abbr> + 234 9024837647
                                     </address>
                                 </div>
                             </div>
@@ -43,14 +52,9 @@
                                                 <td class="p-0 pe-5 py-1">
                                                     <p class="mb-0">Amount : </p>
                                                 </td>
-                                                <td class="text-end text-dark fw-medium px-0 py-1">$<%=  grandTotal.toFixed(2) %></td>
+                                                <td class="text-end text-dark fw-medium px-0 py-1">#<%=  grandTotal %></td>
                                             </tr>
-                                            <tr>
-                                                <td class="p-0 pe-5 py-1">
-                                                    <p class="mb-0">Status : </p>
-                                                </td>
-                                                <td class="text-end px-0 py-1"><span class="badge bg-success text-white  px-2 py-1 fs-13">Paid</span></td>
-                                            </tr>
+                                           
 
 
                                         </tbody>
@@ -118,10 +122,9 @@
                                                     </div>
                                                 </td>
                                                 <td><%= product.quantity %></td>
-                                                <td>$<%= product.price.toFixed(2) %></td>
-                                                <!-- <td>$<%= product.discount.toFixed(2) %></td> -->
-                                                <td>$<%= product.tax.toFixed(2) %></td>
-                                                <td class="text-end">$<%= product.total.toFixed(2) %></td>
+                                                <td>#<%= product.price.toFixed(2) %></td>
+                                                <td>#<%= product.tax.toFixed(2) %></td>
+                                                <td class="text-end">#<%= product.total.toFixed(2) %></td>
                                             </tr>
                                             <% }) %>
                                         </tbody> <!-- end tbody -->
@@ -139,20 +142,20 @@
                                                 <td class="text-end p-0 pe-5 py-2">
                                                     <p class="mb-0"> Sub Total : </p>
                                                 </td>
-                                                <td class="text-end text-dark fw-medium  py-2">$<%= subtotal.toFixed(2) %></td>
+                                                <td class="text-end text-dark fw-medium  py-2">#<%= subtotal %></td>
                                             </tr>
                                             <tr>
                                                 <td class="text-end p-0 pe-5 py-2">
                                                     <p class="mb-0">Discount : </p>
                                                 </td>
-                                                <td class="text-end text-dark fw-medium  py-2">-$<%= discount.toFixed(2) %></td>
+                                                <td class="text-end text-dark fw-medium  py-2">-#<%= discount %></td>
                                             </tr>
                                             
                                             <tr class="border-top">
                                                 <td class="text-end p-0 pe-5 py-2">
-                                                    <p class="mb-0 text-dark fw-semibold">Grand Amount : </p>
+                                                    <p class="mb-0 text-dark fw-semibold"> Grand Amount : </p>
                                                 </td>
-                                                <td class="text-end text-dark fw-semibold  py-2">$<%=  grandTotal.toFixed(2) %></td>
+                                                <td class="text-end text-dark fw-semibold  py-2">#<%=  grandTotal %></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -166,23 +169,17 @@
                             <div class="col-lg-12">
                                 <div class="alert alert-danger alert-icon p-2" role="alert">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-sm rounded bg-danger d-flex justify-content-center align-items-center fs-18 me-2 flex-shrink-0">
-                                            <i class="bx bx-info-circle text-white"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                           All accounts are to be paid within 7 days from receipt of invoice. To be paid by cheque or credit card or direct payment online. 
-                                           If account is not paid within 7 days the credits details supplied as confirmation of work undertaken will be charged the agreed quoted fee noted above.
-                                        </div>
-                                    </div>
+                                        
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-3 mb-1">
                             <div class="text-end d-print-none">
-                                <a href="/edit_account" class="btn btn-outline-secondary width-xl">Edit Account Details</a>
+                                <a href="/edit_account" class="btn btn-outline-secondary width-xl">Edit Create Account</a>
+                                <a href="/cart" class="btn btn-outline-secondary width-xl">Add More Products</a>
                                 <a href="javascript:window.print()" class="btn btn-info width-xl">Print</a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary width-xl">Make Payment</a>
+                                <button  id="paystackBtn" class="btn btn-outline-primary width-xl">Make Payment</button>
                             </div>
                         </div>
 

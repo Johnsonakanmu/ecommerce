@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     cartId: {
       type: DataTypes.INTEGER, // Should match the type of User's primary key
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'carts',
         key: 'id'

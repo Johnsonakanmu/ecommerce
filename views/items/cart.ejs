@@ -47,7 +47,7 @@
                                 <div class="col-sm-auto">
                                      <div class="text-lg-end">
                                           <p class="fw-medium mb-0">Items Price</p>
-                                          $<%= item.price ? item.price.toFixed(2) : '0.00' %> 
+                                          #<%= item.price ? item.price.toFixed(2) : '0.00' %> 
 
                                         </div>
 
@@ -73,23 +73,23 @@
                                  </div>
                                  <div class="col-sm-auto">
                                    <p class="text-dark fw-medium mb-0">
-                                     TotalPrice: <span class="text-muted">$<%= ((item.quantity || 0) * (item.price || 0)).toFixed(2) %></span>
+                                     TotalPrice: <span class="text-muted">#<%= ((item.quantity || 0) * (item.price || 0)).toFixed(2) %></span>
                                    </p>
                                    
                                    <% if (item.discount && item.discount > 0) { %>
                                    <p class="text-dark fw-medium mb-0" style="margin-left: 10px">
-                                     Discount: <span class="text-muted"> $<%= ((item.quantity || 0) * (item.discount || 0)).toFixed(2) %></span>
+                                     Discount: <span class="text-muted"> #<%= ((item.quantity || 0) * (item.discount || 0)).toFixed(2) %></span>
                                    </p>
                                    <% } %>
                                  
                                    <% if (item.tax && item.tax > 0) { %>
                                    <p class="text-dark fw-medium mb-0" style="margin-left: 35px;">
-                                     Tax: <span class="text-muted"> $<%= Number((item.quantity || 0) * (item.tax || 0)).toFixed(2) %></span>
+                                     Tax: <span class="text-muted"> #<%= Number((item.quantity || 0) * (item.tax || 0)).toFixed(2) %></span>
                                    </p>
                                    <% } %>
                                  
                                    <p class="text-dark fw-medium mb-0" style="margin-left: 20px;">
-                                     Total: <span class="text-muted">$<%= item.individualTotal %></span>
+                                     Total: <span class="text-muted">#<%= item.individualTotal %></span>
                                    </p>
                                  </div>
                                  
@@ -178,7 +178,7 @@
                                                <td class="px-0">
                                                     <p class="d-flex mb-0 align-items-center gap-1"><iconify-icon icon="solar:clipboard-text-broken"></iconify-icon> Sub Total : </p>
                                                </td>
-                                               <td class="text-end text-dark fw-medium px-0">$<%= subtotal %></td>
+                                               <td class="text-end text-dark fw-medium px-0">#<%= subtotal %></td>
                                           </tr>
                                           
                                      </tbody>
@@ -192,7 +192,7 @@
                                      <p class="fw-medium text-dark mb-0">Total Amount</p>
                                 </div>
                                 <div>
-                                     <p class="fw-medium text-dark mb-0"><%= total %></p>
+                                     <p class="fw-medium text-dark mb-0">#<%= total %></p>
                                 </div>
                            </div>
                            <div class="alert alert-warning alert-icon mt-3 mb-0" role="alert">
@@ -210,7 +210,8 @@
 
                  <div class="main-btn my-4 text-end">
                       <a href="/" class="btn btn-primary">Continue Shopping</a>
-                      <a href="create_account" class="btn btn-success">Checkout</a>
+                      <a href="/confirmation_page" class="btn btn-outline-secondary width-xl">Proceed to Confirmation</a>
+                      <a href="login" class="btn btn-success">Checkout</a>
                  </div>
             </div>
        </div>

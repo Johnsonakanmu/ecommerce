@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Order.init({
     userId: {
-      type: DataTypes.INTEGER, // Should match the type of User's primary key
+      type: DataTypes.INTEGER, 
       allowNull: false,
       references: {
         model: 'users',
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     shippingDetailId: {
-      type: DataTypes.INTEGER, // Should match the type of User's primary key
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'shippingDetails',

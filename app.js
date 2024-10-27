@@ -60,8 +60,6 @@ app.use((req, res, next)=>{
       //   req.session.visited = true;  // Mark the session as initialized or modified
       // }
      
-      
-
       next();
     } catch (err) {
       console.log(err);
@@ -79,13 +77,13 @@ app.set('view engine', 'ejs');
 const productRoutes = require('./server/routes/productRoute')
 const authRoutes = require('./server/routes/authRoute')
 const itemRoutes = require('./server/routes/itemRoute')
-// const categoryRoutes = require('./server/routes/catergoryRoute');
+const adminRoutes = require('./server/routes/adminRoute');
 
 
 app.use('/', productRoutes);
 app.use('/', authRoutes)
 app.use('/', itemRoutes);
-// app.use('/', categoryRoutes)
+app.use('/', adminRoutes)
 
 
 

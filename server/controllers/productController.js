@@ -1,15 +1,8 @@
-const { Product, CartItem, Order } = require("../../models/index");
+const { Product, CartItem, Order, OrderItem } = require("../../models/index");
 const fs = require("fs");
 
 
-exports.homePage = (req, res, next) => {
-  
-  
-  res.render("product/index", {
-    title: "Home Page | Order Your Jersey",
-    showSidebar: true,
-  });
-};
+
 
 
 exports.getAllProducts = async (req, res) => {
@@ -20,7 +13,7 @@ exports.getAllProducts = async (req, res) => {
     const { count, rows: products } = await Product.findAndCountAll({
       limit,
       offset: (currentPage - 1) * limit,
-      attributes: ['id', 'productName', 'price', 'quantity', 'soldAmount', 'imageUrl', 'size', 'createdBy' ],
+      attributes: ['id', 'productName', 'price', 'quantity', 'soldAmount', 'imageUrl', 'size', 'sellingPrice', 'productCategories' ],
       order: [['createdAt', 'DESC']], // Adjust order as needed
       include: [
         {
@@ -96,8 +89,6 @@ exports.addProducts = (req, res, next) => {
 };
 
 
-
-
 exports.addProduct = async (req, res, next) => {
   const {
     productName, productCategories, productBrand, description, gender, color,
@@ -155,7 +146,6 @@ exports.addProduct = async (req, res, next) => {
   }
 };
 
-
 exports.getEditProductPage = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -188,7 +178,6 @@ exports.getEditProductPage = async (req, res, next) => {
     res.redirect("/");
   }
 };
-
 
 exports.updateProduct = async (req, res, next) => {
   const id = req.params.id;
@@ -290,58 +279,65 @@ exports.updateProduct = async (req, res, next) => {
 };
 
 exports.deleteProduct = async (req, res, next) => {
-    const id = req.params.id;
+  const id = req.params.id;
 
-    try {
-        // Find the product by ID
-        const product = await Product.findOne({ where: { id } });
+  try {
+      // Find the product by ID
+      const product = await Product.findOne({ where: { id } });
 
-        if (!product) {
-            req.session.message = {
-                type: 'danger',
-                message: 'Product not found'
-            };
-            return res.redirect('/');
-        }
+      if (!product) {
+          req.session.message = {
+              type: 'danger',
+              message: 'Product not found'
+          };
+          return res.redirect('/');
+      }
 
-        // Delete related cart items
-        await CartItem.destroy({ where: { productId: id } }); // Adjust model name and field as necessary
+      // Delete related cart items
+      await CartItem.destroy({ where: { productId: id } });
 
-        // Check if product has an image and delete it
-        if (product.image) {
-            const imagePath = `./uploads/${product.image}`;
-            try {
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
-                } else {
-                    console.warn(`Image not found at path: ${imagePath}`);
-                }
-            } catch (error) {
-                console.error('Error deleting image:', error);
-                req.session.message = {
-                    type: 'danger',
-                    message: 'Error deleting product image'
-                };
-                return res.redirect('/');
-            }
-        }
+      // Delete related order items
+      await OrderItem.destroy({ where: { productId: id } }); // Add this line to delete related order items
 
-        // Delete the product
-        await product.destroy();
+      // Check if product has an image and delete it
+      if (product.image) {
+          const imagePath = path.join(__dirname, 'uploads', product.image); // Absolute path based on multer's saved file
 
-        req.session.message = {
-            type: 'info',
-            message: 'Product deleted successfully'
-        };
-        res.redirect('/');
-    } catch (err) {
-        console.error('Error deleting product:', err);
-        req.session.message = {
-            type: 'danger',
-            message: 'Error deleting product: ' + err.message // Provide more detail in the error message
-        };
-        res.redirect('/');
-    }
+          console.log(`Attempting to delete image at: ${imagePath}`); // Debugging
+
+          try {
+              if (fs.existsSync(imagePath)) {
+                  fs.unlinkSync(imagePath); // Delete file
+                  console.log('Image deleted successfully');
+              } else {
+                  console.warn(`Image not found at path: ${imagePath}`);
+              }
+          } catch (error) {
+              console.error('Error deleting image:', error);
+              req.session.message = {
+                  type: 'danger',
+                  message: 'Error deleting product image'
+              };
+              return res.redirect('/');
+          }
+      }
+
+      // Delete the product
+      await product.destroy();
+
+      req.session.message = {
+          type: 'info',
+          message: 'Product deleted successfully'
+      };
+      res.redirect('/');
+  } catch (err) {
+      console.error('Error deleting product:', err);
+      req.session.message = {
+          type: 'danger',
+          message: 'Error deleting product: ' + err.message
+      };
+      res.redirect('/');
+  }
 };
 
 // Controller function to handle product detail
@@ -364,64 +360,28 @@ exports.productDetail = async (req, res, next) => {
   }
 };
 
-exports.updateProductSoldAmount = async (req, res) => {
-  const { id } = req.params; // Product ID from URL
-  const { soldAmount } = req.body; // Amount to add to soldAmount
 
+
+exports.getProductSoldAndRemaining = async (req, res) => {
   try {
-    // Find the product by ID
-    const product = await Product.findOne({ where: { id } });
+    const products = await Product.findAll({
+      attributes: ['id', 'name', 'quantity', 'quantitySold'], // Include necessary fields
+    });
 
-    if (!product) {
-      req.session.message = {
-        type: "danger",
-        message: "Product not found",
-      };
-      return res.redirect("/"); // Redirect or handle error
-    }
+    // Ensure quantitySold defaults to 0 if not set
+    const formattedProducts = products.map(product => ({
+      ...product.toJSON(),
+      quantitySold: product.quantitySold || 0, // Default to 0 if not set
+    }));
 
-    // Convert soldAmount to a number to ensure correct arithmetic
-    const soldAmountValue = parseInt(soldAmount, 10);
-    
-    // Ensure soldAmount is a valid number
-    if (isNaN(soldAmountValue) || soldAmountValue <= 0) {
-      req.session.message = {
-        type: "danger",
-        message: "Invalid sold amount",
-      };
-      return res.redirect("/"); // Redirect or handle error
-    }
-
-    // Check if the sold amount exceeds available stock
-    if ((product.soldAmount || 0) + soldAmountValue > product.productStock) {
-      req.session.message = {
-        type: "danger",
-        message: "Sold amount exceeds available stock",
-      };
-      return res.redirect("product/product_detail"); // Redirect or handle error
-    }
-
-    // Update sold amount and save the updated product
-    product.soldAmount = (product.soldAmount || 0) + soldAmountValue;
-
-    // Save the updated product
-    await product.save();
-
-    // Redirect to product list or success page
-    req.session.message = {
-      type: "success",
-      message: "Sold amount updated successfully",
-    };
-    res.redirect("/product_detail"); // Redirect to the products page or wherever appropriate
+    res.render('productList', { products: formattedProducts }); // Render the product list page
   } catch (err) {
-    console.error('Error updating product sold amount:', err);
-    req.session.message = {
-      type: 'danger',
-      message: 'Error updating product sold amount',
-    };
-    res.redirect('/product_detail'); // Redirect or handle error
+    console.error('Error fetching products:', err);
+    res.status(500).send("Error fetching products");
   }
 };
+
+
 
 
 

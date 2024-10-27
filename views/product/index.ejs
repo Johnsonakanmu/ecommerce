@@ -9,12 +9,12 @@
                       <div class="card-body">
                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                     <h4 class="card-title mb-2">Payment Refund</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">490</p>
+                                     <h4 class="card-title mb-2">Total Orders</h4>
+                                     <p class="text-muted fw-medium fs-22 mb-0"><%=  totalOrders %></p>
                                 </div>
                                 <div>
                                      <div class="avatar-md bg-primary bg-opacity-10 rounded">
-                                          <iconify-icon icon="solar:chat-round-money-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
+                                          <iconify-icon icon="solar:box-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
                                      </div>
                                 </div>
                            </div>
@@ -27,7 +27,7 @@
                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                      <h4 class="card-title mb-2">Order Cancel</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">241</p>
+                                     <p class="text-muted fw-medium fs-22 mb-0"><%= canceledOrders.length %></p>
                                 </div>
                                 <div>
                                      <div class="avatar-md bg-primary bg-opacity-10 rounded">
@@ -39,23 +39,7 @@
                  </div>
             </div>
 
-            <div class="col-md-6 col-xl-3">
-                 <div class="card">
-                      <div class="card-body">
-                           <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                     <h4 class="card-title mb-2">Order Shipped</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">630</p>
-                                </div>
-                                <div>
-                                     <div class="avatar-md bg-primary bg-opacity-10 rounded">
-                                          <iconify-icon icon="solar:box-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
-                                     </div>
-                                </div>
-                           </div>
-                      </div>
-                 </div>
-            </div>
+            
 
             <div class="col-md-6 col-xl-3">
                  <div class="card">
@@ -63,7 +47,7 @@
                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                      <h4 class="card-title mb-2">Order Delivering</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">170</p>
+                                     <p class="text-muted fw-medium fs-22 mb-0"><%= deliveringOrders.length %></p>
                                 </div>
                                 <div>
                                      <div class="avatar-md bg-primary bg-opacity-10 rounded">
@@ -75,47 +59,15 @@
                  </div>
             </div>
 
-            <div class="col-md-6 col-xl-3">
-                 <div class="card">
-                      <div class="card-body">
-                           <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                     <h4 class="card-title mb-2">Pending Review</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">210</p>
-                                </div>
-                                <div>
-                                     <div class="avatar-md bg-primary bg-opacity-10 rounded">
-                                          <iconify-icon icon="solar:clipboard-remove-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
-                                     </div>
-                                </div>
-                           </div>
-                      </div>
-                 </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-                 <div class="card">
-                      <div class="card-body">
-                           <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                     <h4 class="card-title mb-2">Pending Payment</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">608</p>
-                                </div>
-                                <div>
-                                     <div class="avatar-md bg-primary bg-opacity-10 rounded">
-                                          <iconify-icon icon="solar:clock-circle-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
-                                     </div>
-                                </div>
-                           </div>
-                      </div>
-                 </div>
-            </div>
+            
+            
             <div class="col-md-6 col-xl-3">
                  <div class="card">
                       <div class="card-body">
                            <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                      <h4 class="card-title mb-2">Delivered</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">200</p>
+                                     <p class="text-muted fw-medium fs-22 mb-0"><%= deliveredOrders.length %></p>
                                 </div>
                                 <div>
                                      <div class="avatar-md bg-primary bg-opacity-10 rounded">
@@ -126,289 +78,216 @@
                       </div>
                  </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                 <div class="card">
-                      <div class="card-body">
-                           <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                     <h4 class="card-title mb-2">In Progress</h4>
-                                     <p class="text-muted fw-medium fs-22 mb-0">656</p>
-                                </div>
-                                <div>
-                                     <div class="avatar-md bg-primary bg-opacity-10 rounded">
-                                          <iconify-icon icon="solar:inbox-line-broken" class="fs-32 text-primary avatar-title"></iconify-icon>
-                                     </div>
-                                </div>
-                           </div>
-                      </div>
-                 </div>
-            </div>
-       </div>
+            
 
        <div class="row">
             <div class="col-xl-12">
                  <div class="card">
-                      <div class="d-flex card-header justify-content-between align-items-center">
-                           <div>
-                                <h4 class="card-title">All Order List</h4>
-                           </div>
-                           <div class="dropdown">
-                                <a href="#" class="dropdown-toggle btn btn-sm btn-outline-light rounded" data-bs-toggle="dropdown" aria-expanded="false">
-                                     This Month
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                     <!-- item-->
-                                     <a href="#!" class="dropdown-item">Download</a>
-                                     <!-- item-->
-                                     <a href="#!" class="dropdown-item">Export</a>
-                                     <!-- item-->
-                                     <a href="#!" class="dropdown-item">Import</a>
-                                </div>
-                           </div>
-                      </div>
+                    <div class="d-flex card-header justify-content-between align-items-center">
+                         <div>
+                             <h4 class="card-title">All Order List</h4>
+                         </div>
+                         <div class="d-flex">
+                             <form id="filterForm" action="/dashboard" method="GET" class="d-flex align-items-center">
+                                 <div class="input-group me-2">
+                                     <input type="date" class="form-control" name="date" placeholder="Select a date">
+                                 </div>
+                                 <div class="input-group me-2">
+                                     <select name="month" class="form-select">
+                                         <option value="">Select a month</option>
+                                         <option value="1">January</option>
+                                         <option value="2">February</option>
+                                         <option value="3">March</option>
+                                         <option value="4">April</option>
+                                         <option value="5">May</option>
+                                         <option value="6">June</option>
+                                         <option value="7">July</option>
+                                         <option value="8">August</option>
+                                         <option value="9">September</option>
+                                         <option value="10">October</option>
+                                         <option value="11">November</option>
+                                         <option value="12">December</option>
+                                     </select>
+                                 </div>
+                                 <button class="btn btn-outline-secondary" type="submit">Filter</button>
+                             </form>
+                         </div>
+                     </div>
                       <div class="card-body p-0">
                            <div class="table-responsive">
+                            <% if (orders.length > 0) { %>
                                 <table class="table align-middle mb-0 table-hover table-centered">
                                      <thead class="bg-light-subtle">
                                           <tr>
                                                <th>Order ID</th>
                                                <th>Created at</th>
                                                <th>Customer</th>
-                                               <th>Priority</th>
-                                               <th>Total</th>
-                                               <th>Payment Status</th>
                                                <th>Items</th>
-                                               <th>Delivery Number</th>
+                                               <th>No. Of Items</th>
+                                               <th>Total</th>
+                                               <th>Purchase Status</th>  
+                                               <th>Payment Status</th>            
                                                <th>Order Status</th>
                                                <th>Action</th>
                                           </tr>
                                      </thead>
                                      <tbody>
+                                        <% orders.forEach(order => { %>
                                           <tr>
+                                               <td><%= order.order_no %> </td>                                             
+                                               <td><%= new Date(order.createdAt).toLocaleDateString() %></td> 
+                                               <td> <a href="#!" class="link-primary fw-medium"><%= order.user.fullName %></a> </td>                                             
                                                <td>
-                                                    #583488/80
-                                               </td>
-                                               <td>Apr 23 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Gail C. Anderson</a>
-                                               </td>
-                                               <td> Normal</td>
-                                               <td> $1,230.00</td>
-                                               <td> <span class="badge bg-light text-dark  px-2 py-1 fs-13">Unpaid</span></td>
-                                               <td> 4</td>
-                                               <td> -</td>
-                                               <td> <span class="badge border border-secondary text-secondary  px-2 py-1 fs-13">Draft</span></td>
+                                                  <%= order.orderItems.map(item => item.product.productName).join(', ') %>
+                                              </td>
+                                              <td><%= order.orderItems.reduce((total, item) => total + item.quantity, 0) %></td>
+
+                                               <td> #<%= order.amount.toFixed(2) %> </td>
+                                               <td> <span class="badge bg-light text-dark  px-2 py-1 fs-13"><%= order.status %></span></td>
+                                               <td> <span class="badge bg-success text-white py-1 px-2">Items Received</span> </td>
+                                               <td><span class="badge bg-success-subtle text-success py-1 px-2">Completed</span></td>                                              
                                                <td>
                                                     <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
+                                                       <!-- Update Button -->
+                                                       <button type="button" class="btn btn-soft-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateModal<%= order.id %>">
+                                                            <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
+                                                        </button>
                                                     </div>
                                                </td>
                                           </tr>
+                                          <!-- Update Modal -->
+    <div class="modal fade" id="updateModal<%= order.id %>" tabindex="-1" aria-labelledby="updateModalLabel<%= order.id %>" aria-hidden="true">
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title" id="updateModalLabel<%= order.id %>">Update Order</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+                 <form action="/orders/<%= order.id %>/update" method="POST">
+                     <!-- Add fields for order details -->
+                     <div class="mb-3">
+                         <label for="status" class="form-label">Status</label>
+                         <select name="status" class="form-select" required>
+                            <option value="">Select Status</option>
+                             <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                             <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                             <option value="canceled" <%= order.status === 'canceled' ? 'selected' : '' %>>Canceled</option>
+                             <!-- Add other statuses as needed -->
+                         </select>
+                     </div>
 
-                                          <tr>
-                                               <td>
-                                                    #456754/80
-                                               </td>
-                                               <td>Apr 20 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Jung S. Ayala</a>
-                                               </td>
-                                               <td> Normal</td>
-                                               <td> $987.00</td>
-                                               <td> <span class="badge bg-success text-light  px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 2</td>
-                                               <td> -</td>
-                                               <td> <span class="badge border border-warning text-warning  px-2 py-1 fs-13">Packaging</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-                                          <tr>
-                                               <td>
-                                                    #578246/80
-                                               </td>
-                                               <td>Apr 19 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">David A. Arnold</a>
-                                               </td>
-                                               <td> High</td>
-                                               <td> $1,478.00</td>
-                                               <td> <span class="badge  bg-success text-light px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 5</td>
-                                               <td> #D-57837678</td>
-                                               <td> <span class="badge border border-success text-success  px-2 py-1 fs-13">Completed</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-                                          <tr>
-                                               <td>
-                                                    #348930/80
-                                               </td>
-                                               <td>Apr 04 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Cecile D. Gordon</a>
-                                               </td>
-                                               <td> Normal</td>
-                                               <td> $720.00</td>
-                                               <td> <span class="badge bg-light text-dark  px-2 py-1 fs-13">Refund</span></td>
-                                               <td> 4</td>
-                                               <td> -</td>
-                                               <td> <span class="badge border border-danger text-danger  px-2 py-1 fs-13">Canceled</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-
-                                          <tr>
-                                               <td>
-                                                    #391367/80
-                                               </td>
-                                               <td>Apr 02 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">William Moreno</a>
-                                               </td>
-                                               <td> Normal</td>
-                                               <td> $1,909.00</td>
-                                               <td><span class="badge  bg-success text-light px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 6</td>
-                                               <td> #D-89734235</td>
-                                               <td> <span class="badge border border-success text-success  px-2 py-1 fs-13">Completed</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-
-                                          <tr>
-                                               <td>
-                                                    #930447/80
-                                               </td>
-                                               <td>March 28 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Alphonse Roy</a>
-                                               </td>
-                                               <td> High</td>
-                                               <td> $879.00</td>
-                                               <td><span class="badge  bg-success text-light px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 4</td>
-                                               <td> #D-35227268</td>
-                                               <td><span class="badge border border-success text-success  px-2 py-1 fs-13">Completed</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-                                          <tr>
-                                               <td>
-                                                    #462397/80
-                                               </td>
-                                               <td>March 20 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Pierpont Marleau</a>
-                                               </td>
-                                               <td> High</td>
-                                               <td> $1,230.00</td>
-                                               <td> <span class="badge bg-light text-dark  px-2 py-1 fs-13">Refund</span></td>
-                                               <td> 2</td>
-                                               <td> -</td>
-                                               <td> <span class="badge border border-danger text-danger  px-2 py-1 fs-13">Canceled</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-                                          <tr>
-                                               <td>
-                                                    #472356/80
-                                               </td>
-                                               <td>March 12 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Madeleine Gervais</a>
-                                               </td>
-                                               <td> Normal</td>
-                                               <td> $1,264.00</td>
-                                               <td> <span class="badge bg-success text-light  px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 3</td>
-                                               <td> #D-74922656</td>
-                                               <td> <span class="badge border border-success text-success  px-2 py-1 fs-13">Completed</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-                                          <tr>
-                                               <td>
-                                                    #448226/80
-                                               </td>
-                                               <td>March 02 , 2024</td>
-                                               <td>
-                                                    <a href="#!" class="link-primary fw-medium">Satordi Gaillou</a>
-                                               </td>
-                                               <td> High</td>
-                                               <td> $1,787.00</td>
-                                               <td> <span class="badge bg-success text-light  px-2 py-1 fs-13">Paid</span></td>
-                                               <td> 4</td>
-                                               <td> -</td>
-                                               <td> <span class="badge border border-warning text-warning  px-2 py-1 fs-13">Packaging</span></td>
-                                               <td>
-                                                    <div class="d-flex gap-2">
-                                                         <a href="#!" class="btn btn-light btn-sm"><iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                         <a href="#!" class="btn btn-soft-danger btn-sm"><iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon></a>
-                                                    </div>
-                                               </td>
-                                          </tr>
-
-
+                     <div class="mb-3">
+                         <label for="status" class="form-label">Payment Status</label>
+                         <span class="badge bg-success text-white py-1 px-2"><%= order.paymentStatus %></span> 
+                         <select name="newPaymentStatus" class="form-select" required>
+                            <option value="">Select Payment Status</option>
+                             <option value="received" <%= order.paymentStatus === 'received' ? 'selected' : '' %>>Received</option>
+                             <option value="pending" <%= order.paymentStatus === 'pending' ? 'selected' : '' %>>Pending</option>
+                             <option value="failed" <%= order.paymentStatus === 'failed' ? 'selected' : '' %>>Failed</option>
+                             <!-- Add more options as necessary -->
+                         </select>
+                     </div>
+                     <div class="mb-3">
+                         <label for="orderStatus" class="form-label">Order Status</label>
+                         <span class="badge bg-success-subtle text-success py-1 px-2"><%= order.status %></span>
+                         <select name="newOrderStatus" class="form-select" required>
+                            <option value="">Select Order Status</option>
+                             <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                             <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                             <option value="canceled" <%= order.status === 'canceled' ? 'selected' : '' %>>Canceled</option>
+                             <!-- Add more options as necessary -->
+                         </select>
+                     </div>
+                     
+                     <!-- Add more fields as needed -->
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                         <button type="submit" class="btn btn-primary">Update Order</button>
+                     </div>
+                 </form>
+             </div>
+         </div>
+     </div>
+ </div>
+                                           
+                                          <% }); %> 
                                      </tbody>
                                 </table>
+                                <% } else { %>
+                                    <% if (selectedDate) { %>
+                                        <h1 class="text-center text-secondary mt-4">No orders made on <%= new Date(selectedDate).toLocaleDateString() %></h1>
+                                    <% } else if (selectedMonth) { %>
+                                        <h1 class="text-center text-secondary mt-4">No orders made in <%= new Date(selectedMonth + '-01').toLocaleString('default', { month: 'long' }) %></h1>
+                                    <% } else { %>
+                                        <h1 class="text-center text-secondary mt-4">No orders made for the selected filters.</h1>
+                                    <% } %>
+                                <% } %>
                            </div>
                            <!-- end table-responsive -->
                       </div>
                       <div class="card-footer border-top">
-                           <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end mb-0">
-                                     <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
-                                     <li class="page-item active"><a class="page-link" href="javascript:void(0);">1</a></li>
-                                     <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
-                                     <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
-                                     <li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
-                                </ul>
-                           </nav>
-                      </div>
+                         <nav aria-label="Page navigation example">
+                             <ul class="pagination justify-content-end mb-0">
+                                 <% if (currentPage > 1) { %>
+                                     <li class="page-item">
+                                         <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">Previous</a>
+                                     </li>
+                                 <% } else { %>
+                                     <li class="page-item disabled">
+                                         <span class="page-link">Previous</span>
+                                     </li>
+                                 <% } %>
+                     
+                                 <% const pageRange = 5; %>
+                                 <% let startPage = Math.max(currentPage - Math.floor(pageRange / 2), 1); %>
+                                 <% let endPage = Math.min(startPage + pageRange - 1, totalPages); %>
+                     
+                                 <% if (endPage - startPage + 1 < pageRange && endPage < totalPages) { %>
+                                     <% startPage = Math.max(endPage - pageRange + 1, 1); %>
+                                 <% } %>
+                     
+                                 <% if (startPage > 1) { %>
+                                     <li class="page-item">
+                                         <a class="page-link" href="?page=1&limit=<%= limit %>">1</a>
+                                     </li>
+                                     <% if (startPage > 2) { %>
+                                         <li class="page-item disabled">
+                                             <span class="page-link">...</span>
+                                         </li>
+                                     <% } %>
+                                 <% } %>
+                     
+                                 <% for (let i = startPage; i <= endPage; i++) { %>
+                                     <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                         <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                                     </li>
+                                 <% } %>
+                     
+                                 <% if (endPage < totalPages) { %>
+                                     <% if (endPage < totalPages - 1) { %>
+                                         <li class="page-item disabled">
+                                             <span class="page-link">...</span>
+                                         </li>
+                                     <% } %>
+                                     <li class="page-item">
+                                         <a class="page-link" href="?page=<%= totalPages %>&limit=<%= limit %>"><%= totalPages %></a>
+                                     </li>
+                                 <% } %>
+                     
+                                 <% if (currentPage < totalPages) { %>
+                                     <li class="page-item">
+                                         <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next</a>
+                                     </li>
+                                 <% } else { %>
+                                     <li class="page-item disabled">
+                                         <span class="page-link">Next</span>
+                                     </li>
+                                 <% } %>
+                             </ul>
+                         </nav>
+                     </div>
+                     
                  </div>
             </div>
 

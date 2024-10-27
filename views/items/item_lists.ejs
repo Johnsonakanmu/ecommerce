@@ -57,24 +57,24 @@
                                   </div>
                                   <div class="form-check">
                                        <input type="checkbox" class="form-check-input" id="price-1">
-                                       <label class="form-check-label" for="price-1">Below $200 (145)</label>
+                                       <label class="form-check-label" for="price-1">Below #200 (145)</label>
                                   </div>
 
                                   <div class="form-check">
                                        <input type="checkbox" class="form-check-input" id="price-2">
-                                       <label class="form-check-label" for="price-2">$200 - $500 (1,885)</label>
+                                       <label class="form-check-label" for="price-2">#200 - #500 (1,885)</label>
                                   </div>
                                   <div class="form-check">
                                        <input type="checkbox" class="form-check-input" id="price-3">
-                                       <label class="form-check-label" for="price-3">$500 - $800 (2,276)</label>
+                                       <label class="form-check-label" for="price-3">#500 - #800 (2,276)</label>
                                   </div>
                                   <div class="form-check">
                                        <input type="checkbox" class="form-check-input" id="price-4">
-                                       <label class="form-check-label" for="price-4">$800 - $1000 (12,676)</label>
+                                       <label class="form-check-label" for="price-4">#800 - #1000 (12,676)</label>
                                   </div>
                                   <div class="form-check">
                                        <input type="checkbox" class="form-check-input" id="price-5">
-                                       <label class="form-check-label" for="price-5">$1000 - $1100 (13,123)</label>
+                                       <label class="form-check-label" for="price-5">#1000 - #1100 (13,123)</label>
                                   </div>
                                   <h5 class="text-dark fw-medium mt-3">Custom Price Range :</h5>
                                   <div id="product-price-range" [data-slider-size="md" ] class=""></div>
@@ -233,11 +233,11 @@
                                         </div>
                                         <% if (product.sellingPrice && product.discount) { %>
                                              <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
-                                                 <span class="text-muted text-decoration-line-through">$<%= product.price || 0 %></span> $<%= product.sellingPrice %> <small class="text-muted"> (<%= product.discount %> Off)</small>
+                                                 <span class="text-muted text-decoration-line-through">#<%= product.price || 0 %></span> #<%= product.sellingPrice %> <small class="text-muted"> (<%= product.discount %> Off)</small>
                                              </h4>
                                          <% } else { %>
                                              <h4 class="fw-semibold text-dark mt-2 d-flex align-items-center gap-2">
-                                                 $<%= product.price || 0 %>
+                                                 #<%= product.price || 0 %>
                                              </h4>
                                          <% } %>
                                         <form action="/cart/<%= product.id %>" method="POST" class="d-flex gap-2">
