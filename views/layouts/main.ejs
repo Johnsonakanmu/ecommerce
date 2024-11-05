@@ -252,13 +252,17 @@
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') {
-            alert('Payment successful, order created!');
-            window.location.href = '/order-summary/' + data.orderId; // Redirect to order summary
+            // alert('Payment successful, order created!');
+            window.location.href = '/transaction_success'; // Redirect to order summary
           } else {
-            alert('Payment verification failed');
+            window.location.href = '/transaction_failed';
           }
         })
-        .catch(error => console.error('Payment verification error:', error));
+        .catch(error => {
+          console.error('Payment verification error:', error);
+          // Redirect to failure page in case of an error
+          window.location.href = '/transaction_failed';
+        });
       },
 
       onClose: function () {

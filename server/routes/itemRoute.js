@@ -25,8 +25,8 @@ router.post('/checkout', itemController.createOrder);
 router.post('/verify-payment', itemController.verifyPayments);
 
 
-router.get('/success_page', itemController.getSuccessPage);
-router.get('/transaction_failed', itemController.getFailurePage);
+router.get('/transaction_success', itemController.getTransactionSuccess);
+router.get('/transaction_failed', itemController.getTransactionFailed);
 
 
 

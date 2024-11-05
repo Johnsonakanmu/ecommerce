@@ -660,10 +660,7 @@ exports.getOrder = async (req, res, next) => {
 
 exports.verifyPayments = async (req, res) => {
   const { reference, totalAmount } = req.body;
-
   const token =  "sk_test_26e81efffb7778dcec9b18e5ac571dc5758e76b8"
-
-
   try {
     // Verify the transaction with Paystack
     const headers = {
@@ -676,6 +673,8 @@ exports.verifyPayments = async (req, res) => {
       url: `https://api.paystack.co/transaction/verify/${reference}`,
       headers,
     });
+    console.log("Request Headers:", headers);
+    console.log("Request URL:", `https://api.paystack.co/transaction/verify/${reference}`);
 
     const paymentData = response.data;
 
@@ -800,95 +799,7 @@ exports.createOrder = async (req, res, next) => {
 };
 
 
-// exports.getSuccessPage = async (req, res, next) => {
-//   try {
-//     const userId = req.session.userId;
-//     console.log("Session User ID:", userId); 
-
-//     // Check if userId is defined
-//     if (!userId) {
-//       throw new Error("User ID is not defined in the session.");
-//     }
-
-//     // Fetch the user details
-//     const user = await User.findByPk(userId);
-//     if (!user) {
-//       console.error("User not found with ID:", userId); // Log user fetch error
-
-//       throw new Error("User not found.");
-//     }
-
-//     // Fetch the user's cart
-//     const cart = await Cart.findOne({ where: { userId } });
-//     if (!cart) {
-//       console.error("No cart found for user with ID:", userId); // Log cart fetch error
-
-//       throw new Error("No cart found for the user.");
-//     }
-
-//     // Fetch the cart items for the cart
-//     const cartItems = await CartItem.findAll({
-//       where: { cartId: cart.id },
-//       include: [
-//         {
-//           model: Product,
-//           as: "product",
-//         },
-//       ],
-//     });
-
-//     // Initialize totals
-//     let subtotal = 0;
-//     let totalDiscount = 0;
-
-//     for (const item of cartItems) {
-//       const product = item.product;
-//       if (!product) continue;
-
-//       // Calculate totals
-//       const originalPrice = parseFloat(product.price) || 0;
-//       const discount = parseFloat(product.discount || 0);
-//       const quantity = parseInt(item.quantity, 10) || 0;
-//       const taxPerUnit = parseFloat(product.tax || 0);
-//       const totalPricePerProduct = (originalPrice + taxPerUnit) * quantity;
-//       const totalDiscountPerProduct = discount * quantity;
-
-//       subtotal += totalPricePerProduct;
-//       totalDiscount += totalDiscountPerProduct;
-//     }
-
-//     const grandTotal = subtotal - totalDiscount;
-
-//     // Generate order date and time
-//     const orderDate = new Date();
-//     const formattedDate = orderDate.toLocaleDateString();
-//     const formattedTime = orderDate.toLocaleTimeString();
-
-//     console.log("Order Date:", orderDate); // Logs raw order date
-//      console.log("Formatted Date:", formattedDate); // Logs formatted date
-//     // Set transaction status dynamically
-//     const transactionStatus = "Successful";
-
-//     // Render the success page
-//     res.render("items/success_page", {
-//       user,
-//       formattedDate,  // Ensure this is passed correctly
-//       formattedTime,  // Ensure this is passed correctly
-//       grandTotal: grandTotal.toFixed(2), 
-//       transactionStatus,
-//       showSidebar: false
-//     });
-//   } catch (err) {
-//     console.error("Error fetching success details:", err);
-//     req.session.message = {
-//       type: "danger",
-//       message: "Could not fetch success page details.",
-//     };
-//     res.redirect("confirmation_page");
-//   }
-// };
-
-exports.getSuccessPage = (req, res, next) => {
+exports.getTransactionSuccess = (req, res, next) => {
   // Retrieve the success message from the session
   const successMessage = req.session.successMessage || "Your transaction was successful!";
   
@@ -896,7 +807,7 @@ exports.getSuccessPage = (req, res, next) => {
   delete req.session.successMessage;
 
   // Render the success page and pass the successMessage to the template
-  res.render("items/success_page", {
+  res.render("items/transaction_success", {
     successMessage, // Pass the success message
     showSidebar: false,
   });
@@ -905,7 +816,7 @@ exports.getSuccessPage = (req, res, next) => {
 
 
 
-exports.getFailurePage = (req, res, next) => {
+exports.getTransactionFailed = (req, res, next) => {
   // Retrieve the error message from the session or request (if applicable)
   const errorMessage = req.session.errorMessage || "An unknown error occurred.";
 
@@ -913,7 +824,7 @@ exports.getFailurePage = (req, res, next) => {
   delete req.session.errorMessage;
 
   // Render the failure page
-  res.render("items/failure_page", {
+  res.render("items/transaction_failed", {
     errorMessage,
     showSidebar: false
   });
