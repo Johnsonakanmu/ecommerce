@@ -543,6 +543,7 @@ exports.getConfirmation = async (req, res, next) => {
         total: totalPricePerProduct,
         imageUrl: product.imageUrl,
         size: product.size,
+         payment_key: process.env.PAYSTACK_PUBLIC_KEY
       });
     }
 
@@ -660,7 +661,7 @@ exports.getOrder = async (req, res, next) => {
 
 exports.verifyPayments = async (req, res) => {
   const { reference, totalAmount } = req.body;
-  const token =  "sk_test_26e81efffb7778dcec9b18e5ac571dc5758e76b8"
+  const token =  process.env.PAYSTACK_PRIVATE_KEY
   try {
     // Verify the transaction with Paystack
     const headers = {
@@ -685,7 +686,7 @@ exports.verifyPayments = async (req, res) => {
     } else {
       res
         .status(400)
-        .json({ status: "failed", message: "Payment verification failed" });
+        .json({ status: "failed", message: "Payment verification failed" }); 
     }
   } catch (error) {
     console.error("Error verifying payment:", error);

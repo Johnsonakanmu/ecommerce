@@ -10,112 +10,6 @@ const validatePassword = (password) => {
 };
 
 
-// exports.loginPage = (req, res, next)=>{
-//     res.render('auth/login', {title: "Login Page | Order Your Jersey",  showSidebar: false });
-// }
-
-
-// // exports.loginPages = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     // Step 1: Check if the user exists in the database
-//     const user = await User.findOne({ where: { email } });
-//     if (!user) {
-//       return res.status(401).json({ message: 'Invalid credentials: User not found' });
-//     }
-
-//     // Step 2: Compare the password using bcrypt
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(401).json({ message: 'Invalid credentials: Incorrect password' });
-//     }
-
-//     // Step 3: Generate a JWT token
-//     const accessToken = jwt.sign(
-//       {
-//         id: user.id,
-//         isAdmin: user.isAdmin,
-//       },
-//       process.env.JWT_SEC,
-//       { expiresIn: '1d' }
-//     );
-
-//     // Step 4: Store the token in a cookie
-//     res.cookie('authToken', accessToken, { httpOnly: true, secure: false }); // Use secure: true in production with HTTPS
-
-//     // Step 5: Store the user ID in the session for session-based management
-//     req.session.userId = user.id; // Store the user ID in the session
-
-//     return res.status(200).json({
-//       message: 'Login successful',
-//       user: {
-//         id: user.id,
-//         email: user.email,
-//         isAdmin: user.isAdmin,
-//         accessToken,
-//       },
-//     });
-
-//   } catch (error) {
-//     console.error('Error during login:', error);
-//     return res.status(500).json({ message: 'An error occurred during login' });
-//   }
-// };
-
-
-
-// exports.signupPage = async (req, res, next) => {
-//   const { email, password, firstName, lastName } = req.body;
-
-//   try {
-//     console.log("Request received:", req.body); // Check what is coming in the request body
-
-//     // Look for an existing user by email
-//     let user = await User.findOne({ where: { email } });
-
-//     if (user) {
-//       // User exists, handle login
-//       const isPasswordValid = await bcrypt.compare(password, user.password);
-//       if (!isPasswordValid) {
-//         return res.status(400).send('Invalid email or password');
-//       }
-
-//       // Store userId in session after login
-//       req.session.userId = user.id;
-//       return res.status(200).send({ message: 'Login successful', user });
-//     } else {
-//       // User doesn't exist, handle sign-up
-//       console.log("Creating a new user...");
-
-//       // Hash the password
-//       const hashedPassword = await bcrypt.hash(password, 10);
-      
-//       // Create the user in the database
-//       user = await User.create({
-//         email,
-//         password: hashedPassword,
-//         firstName,
-//         lastName,
-//       });
-
-//       // If the user was not created, handle the error
-//       if (!user) {
-//         throw new Error("User creation failed");
-//       }
-
-//       console.log("User created successfully:", user);
-
-//       // Store userId in session after sign-up
-//       req.session.userId = user.id;
-//       return res.status(201).send({ message: 'Account created successfully', user });
-//     }
-//   } catch (err) {
-//     console.error("Error during signup or login:", err.message);
-//     return res.status(500).send(`Error occurred during authentication: ${err.message}`);
-//   }
-// };
-
 exports.signupPage = async (req, res, next) => {
   console.log(req.body); // Log request body for debugging
   const { fullName, email, password } = req.body;
@@ -173,18 +67,11 @@ exports.signupPage = async (req, res, next) => {
 };
 
 
-
-
 exports.resetPassword = (req, res, next)=>{
     res.render('auth/reset_password', {title: "Reset Password | Order Your Jersey" , showSidebar: false });
 }
 
-
-
-
 // Login function
-
-
 exports.getLoginAccount = (req, res, next)=>{
   res.render('auth/login', {
       title: "Login Page | Order Your Jersey",  

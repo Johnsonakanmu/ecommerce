@@ -1,22 +1,22 @@
 {
   "development": {
-    "username": "root",
-    "password": "johnson",
-    "database": "order_Jersey_db",
+    "username": "tripanjx_order_jersey_db",
+    "password": "yX81PVNk&R.F!2x,",
+    "database": "tripanjx_order_jersey_db",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "username": "tripanjx_order_jersey_db",
+    "password": "yX81PVNk&R.F!2x,",
+    "database": "tripanjx_order_jersey_db",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+     "username": "tripanjx_order_jersey_db",
+    "password": "yX81PVNk&R.F!2x,",
+    "database": "tripanjx_order_jersey_db",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
