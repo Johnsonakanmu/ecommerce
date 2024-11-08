@@ -1,10 +1,6 @@
 const { Product, CartItem, Order, OrderItem } = require("../../models/index");
 const fs = require("fs");
 
-
-
-
-
 exports.getAllProducts = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10; // Number of items per page
@@ -42,7 +38,7 @@ exports.getAllProducts = async (req, res) => {
       type: 'danger',
       message: 'Error retrieving products',
     };
-    res.redirect('/');
+    res.redirect('/items');
   }
 };
 
@@ -135,14 +131,14 @@ exports.addProduct = async (req, res, next) => {
       type: "success",
       message: "Product added successfully",
     };
-    res.redirect("/");
+    res.redirect("/items");
   } catch (err) {
     console.error("Error adding product:", err);
     req.session.message = {
       type: "danger",
       message: err.message,
     };
-    res.redirect("/");
+    res.redirect("/items");
   }
 };
 
@@ -175,7 +171,7 @@ exports.getEditProductPage = async (req, res, next) => {
       type: "danger",
       message: "Error retrieving product",
     };
-    res.redirect("/");
+    res.redirect("/items");
   }
 };
 
@@ -264,7 +260,7 @@ exports.updateProduct = async (req, res, next) => {
       type: "success",
       message: "Product updated successfully",
     };
-    res.redirect("/");
+    res.redirect("/tems");
   } catch (err) {
     // Log the error and send a JSON response or redirect to an error page
     console.error("Error updating product:", err);
@@ -290,7 +286,7 @@ exports.deleteProduct = async (req, res, next) => {
               type: 'danger',
               message: 'Product not found'
           };
-          return res.redirect('/');
+          return res.redirect('/tems');
       }
 
       // Delete related cart items
@@ -329,14 +325,14 @@ exports.deleteProduct = async (req, res, next) => {
           type: 'info',
           message: 'Product deleted successfully'
       };
-      res.redirect('/');
+      res.redirect('/tems');
   } catch (err) {
       console.error('Error deleting product:', err);
       req.session.message = {
           type: 'danger',
           message: 'Error deleting product: ' + err.message
       };
-      res.redirect('/');
+      res.redirect('/tems');
   }
 };
 

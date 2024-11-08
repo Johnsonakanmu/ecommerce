@@ -140,3 +140,11 @@ exports.loginAccount = async (req, res, next) => {
 };
 
 
+exports.pageNotFound = (req, res, next)=>{
+  res.render('auth/pages-404', {title: "Page Not Found | Order Your Jersey" , showSidebar: false });
+}
+
+
+
+
+

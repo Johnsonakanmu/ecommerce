@@ -87,6 +87,16 @@ app.use('/', adminRoutes)
 
 
 
+// 404 Middleware
+app.use((req, res, next) => {
+  res.status(404).render('auth/pages-404', {
+      title: "Page Not Found | Order Your Jersey",
+      showSidebar: false
+  });
+});
+
+
+
 app.listen({port: 4000}, async () => {
     console.log(`Server up on http://localhost:${port}`);
     await sequelize.authenticate()

@@ -543,7 +543,8 @@ exports.getConfirmation = async (req, res, next) => {
         total: totalPricePerProduct,
         imageUrl: product.imageUrl,
         size: product.size,
-         payment_key: process.env.PAYSTACK_PUBLIC_KEY
+        payment_key: process.env.PAYSTACK_PUBLIC_KEY, // Pass the payment key explicitly
+        showSidebar: false,      
       });
     }
 
@@ -813,8 +814,6 @@ exports.getTransactionSuccess = (req, res, next) => {
     showSidebar: false,
   });
 };
-
-
 
 
 exports.getTransactionFailed = (req, res, next) => {

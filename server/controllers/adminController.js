@@ -6,6 +6,7 @@ const { Sequelize } = require('sequelize');
 
 exports.homePage = async (req, res, next) => {
     try {
+
         const limit = parseInt(req.query.limit) || 10; // Number of items per page
         const currentPage = parseInt(req.query.page) || 1; // Current page number
         const { date, month } = req.query; // Get filter values
@@ -117,6 +118,30 @@ exports.getAdminUpdateOrder = async (req, res, next) => {
         res.status(500).send("Internal Server Error");
     }
   };
+
+
+
+  exports.adminSignIn = (req, res, next)=>{
+    res.render('auth/sign_in', {title: "Sign In | Order Your Jersey",
+        errorMessage: null,
+         showSidebar: false });
+  }
+  
+  exports.adminSignIns = (req, res, next)=>{
+    const { username, password } = req.body;
+
+    // Simulate user authentication (replace with actual logic)
+    if (username === 'tripanjx' && password === 'bvcozmYVUaZ9') {
+        req.session.isLoggedIn = true;
+        res.redirect('/'); // Redirect to dashboard after successful login
+    } else {
+        res.status(401).render('auth/sign_in', {
+            title: "Sign In | Order Your Jersey",
+            showSidebar: false,
+            errorMessage: "Invalid credentials, please try again."
+        });
+    }
+  }
 
 
   

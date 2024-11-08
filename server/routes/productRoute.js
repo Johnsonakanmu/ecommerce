@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const productController = require('../controllers/productController')
 const upload = require('../../middleware/upload')
-// const { ensureAuthenticated } = require('../../utils/ensureAuthentication')
-// const {verifyToken} = require('../../server/routes/verifyToken')
 
 router.get('/product_list', productController.listView)
 router.get('/add_product',  productController.addProducts)
